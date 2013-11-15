@@ -6,9 +6,11 @@ __pycache__
 env
 
 apidocs
+README.rst
 docs/README.html
 
 .coverage
 
 build
 dist
+

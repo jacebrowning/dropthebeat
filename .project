@@ -16,7 +16,7 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1384462090689</id>
+			<id>1384474947397</id>
 			<name></name>
 			<type>26</type>
 			<matcher>
@@ -25,7 +25,7 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1384462090695</id>
+			<id>1384474947398</id>
 			<name></name>
 			<type>26</type>
 			<matcher>
@@ -34,7 +34,7 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1384462090702</id>
+			<id>1384474947400</id>
 			<name></name>
 			<type>26</type>
 			<matcher>
@@ -43,12 +43,30 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1384462090707</id>
+			<id>1384474947401</id>
 			<name></name>
 			<type>22</type>
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-false-README.rst</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1384474947403</id>
+			<name></name>
+			<type>26</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-apidocs</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1384474947405</id>
+			<name></name>
+			<type>22</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-*.sublime-project</arguments>
 			</matcher>
 		</filter>
 	</filteredResources>
