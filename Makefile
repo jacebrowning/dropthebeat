@@ -86,8 +86,8 @@ pep8: depends
 .PHONY: pylint
 pylint: depends
 	$(PYLINT) $(PACKAGE) --reports no \
-	                     --msg-template="{msg_id}: {msg}: {obj} line:{line}" \
-	                     --max-line-length=99 \
+	                     --msg-template="{msg_id}:{line:3d},{column}:{msg}" \
+	                     --max-line-length=79 \
 	                     --disable=I0011,W0142,W0511,R0801
 
 .PHONY: check

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>dropthebeat</name>
+	<name>DropTheBeat</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -16,7 +16,7 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>1384475095343</id>
+			<id>0</id>
 			<name></name>
 			<type>26</type>
 			<matcher>
@@ -25,7 +25,7 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1384475095344</id>
+			<id>0</id>
 			<name></name>
 			<type>26</type>
 			<matcher>
@@ -34,7 +34,7 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1384475095346</id>
+			<id>0</id>
 			<name></name>
 			<type>26</type>
 			<matcher>
@@ -43,7 +43,7 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1384475095348</id>
+			<id>0</id>
 			<name></name>
 			<type>22</type>
 			<matcher>
@@ -52,7 +52,7 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1384475095350</id>
+			<id>0</id>
 			<name></name>
 			<type>26</type>
 			<matcher>
@@ -61,12 +61,21 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1384475095352</id>
+			<id>0</id>
 			<name></name>
 			<type>22</type>
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-false-*.sublime-project</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>0</id>
+			<name></name>
+			<type>22</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-README.html</arguments>
 			</matcher>
 		</filter>
 	</filteredResources>

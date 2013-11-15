@@ -43,7 +43,7 @@ class Song(Base, object):
         }
 
 
-class Library:
+class Library(object):
     def __init__(self, uri, echo=False):
         # Create database engine
         self.engine = create_engine(uri, echo=echo)
