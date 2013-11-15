@@ -22,7 +22,7 @@ class Song(Base, object):
 
 
     def __init__(self, **kw):
-        for attr, val in kw.iteritems():
+        for attr, val in kw.items():
             setattr(self, attr, val)
 
 
@@ -57,11 +57,11 @@ class Library:
     def search(self, query={}):
         q = self.session.query(Song).options(eagerload('*'))
         try:
-            for col, value in query.iteritems():
+            for col, value in query.items():
                 # Apply filters to columns
                 q = q.filter(getattr(Song, col).like(value))
         except AttributeError as e:
-            print e
+            print(e)
 
         q = q.order_by(Song.id)
         return q.all()
@@ -69,9 +69,9 @@ class Library:
 
     def add(self, song):
         if self.search(song.to_dict()):
-            print 'add(): Duplicate:', song
+            print('add(): Duplicate:', song)
         else:
-            print 'add(): Added song:', s
+            print('add(): Added song:', s)
             self.session.add(song)
             self.session.commit()
 
