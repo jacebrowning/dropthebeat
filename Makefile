@@ -131,7 +131,9 @@ clean-all: clean
 .PHONY: dist
 dist: .clean-dist doc
 	$(PYTHON) setup.py sdist
+	$(PYTHON) setup.py bdist_wheel
 
 .PHONY: upload
 upload: .clean-dist doc
 	$(PYTHON) setup.py register sdist upload
+	$(PYTHON) setup.py bdist_wheel upload

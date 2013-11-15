@@ -25,5 +25,5 @@ setuptools.setup(
     long_description=open('README.rst').read(),
     license='LGPL',
 
-    install_requires=[],
+    install_requires=["wheel", "sqlalchemy==0.8.3"],
 )
