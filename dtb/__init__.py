@@ -9,6 +9,7 @@ from pkg_resources import get_distribution, DistributionNotFound
 __project__ = 'DropTheBeat'
 __version__ = None  # required for initial installation
 
+CLI = 'dtb'
 
 try:
     __version__ = get_distribution(__project__).version  # pylint: disable=E1103

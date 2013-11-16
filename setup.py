@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 """
-Setup script for Comparable.
+Setup script for DropTheBeat.
 """
 
-from dtb import __project__
+from dtb import __project__, CLI
 
 import setuptools
 
@@ -19,11 +19,12 @@ setuptools.setup(
 
     packages=setuptools.find_packages(),
 
-    entry_points={'console_scripts': []},
+    entry_points={'console_scripts': [CLI + ' = dtb.cli:main',
+                                      'DropTheBeat = dtb.gui:main']},
 
 
     long_description=open('README.rst').read(),
     license='LGPL',
 
-    install_requires=["wheel", "sqlalchemy==0.8.3"],
+    install_requires=["wheel", "PyYAML==3.10", "sqlalchemy==0.8.3"],
 )
