@@ -50,8 +50,8 @@ def main(args=None):
 
     # Main parser
     parser = argparse.ArgumentParser(prog=CLI, description=__doc__, **shared)
-    parser.add_argument('-x', '--no-gui', action='store_true',
-                        help="run in terminal mode")
+    parser.add_argument('-g', '--gui', action='store_true',
+                        help="launch the GUI")
     parser.add_argument('-d', '--daemon', action='store_true',
                         help="if terminal mode, run forever")
     parser.add_argument('--new', metavar='FirstLast',
@@ -147,7 +147,7 @@ def _run(args, cwd, err):  # pylint: disable=W0613
             print(song)
         return True
 
-    if args.no_gui:
+    if not args.gui:
         while True:
             for song in this.incoming:
                 song.download()

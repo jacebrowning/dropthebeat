@@ -97,22 +97,33 @@ class User(object):
     @property
     def incoming(self):
         """Iterate through the list of incoming songs."""
+        found = False
         logging.debug("looking for incoming songs...")
         for friendname in os.listdir(self.path):
             if friendname != User.PRIVATE:
                 friendpath = os.path.join(self.path, friendname)
                 for filename in os.listdir(friendpath):
                     filepath = os.path.join(friendpath, filename)
-                    yield Song(filepath, self.downloads, friendname)
+                    song = Song(filepath, self.downloads, friendname)
+                    found = True
+                    logging.debug("incoming: {}".format(song))
+                    yield song
+        if not found:
+            logging.debug("no incoming songs")
 
     @property
     def outgoing(self):
         """Iterate through the list of outgoing songs."""
+        found = False
         logging.debug("looking for outgoing songs...")
         for friend in self.friends:
             for song in friend.incoming:
                 if song.friendname == self.name:
+                    found = True
+                    logging.debug("outoing: {}".format(song))
                     yield song
+        if not found:
+            logging.debug("no outgoing songs")
 
     def recommend(self, path, users=None):
         """Recommend a song to a list of users."""
@@ -123,13 +134,13 @@ class User(object):
             if not users or friend in users:
                 song.link(os.path.join(friend.path, self.name))
 
-    def request(self, song):
+    def request(self, song):  # pragma: no cover - not implemented
         """Request a new song."""
-        raise NotImplementedError()
+        raise NotImplementedError("TODO: implemented song requests")
 
-    def delete(self):
+    def delete(self):  # pragma: no cover - not implemented
         """Delete the user."""
-        raise NotImplementedError()
+        raise NotImplementedError("TODO: implement user deletion")
 
 
 def get_info():
