@@ -43,18 +43,30 @@ Initial Setup
 Command-line Inteface
 ---------------------
 
+	# Create a user
     dtb --new <FirstLast>
-    dtb --no-gui
 
+	# Recommend a song to friends
     dtb --share <path/to/a/song>
+    dtb --share <path/to/a/song> --users JohnDoe JaneDoe
+
+    # Check recommended songs
     dtb --incoming
     dtb --outoing
+
+    # Download recommended songs
+    dtb
+    dtb --daemon
+
+    # Launch the GUI
+    dtb --gui
 
 
 Graphical Interface
 -------------------
 
-    DropTheBeat  # or 'dtb'
+	# Start the app
+    DropTheBeat
 
 
 

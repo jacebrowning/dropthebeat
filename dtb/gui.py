@@ -5,9 +5,9 @@ Graphical interface for DropTheBeat.
 """
 
 
-def main():
+def main():  # pragma: no cover - not implemented
     """Main GUI entry point."""
-    raise NotImplementedError()
+    raise NotImplementedError("TODO: implement GUI")
 
 
 if __name__ == '__main__':  # pragma: no cover, manual test
