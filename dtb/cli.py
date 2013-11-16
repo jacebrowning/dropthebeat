@@ -54,15 +54,15 @@ def main(args=None):
                         help="run in terminal mode")
     parser.add_argument('-d', '--daemon', action='store_true',
                         help="if terminal mode, run forever")
-    parser.add_argument('--new', metavar='FirstLast',
+    parser.add_argument('-n', '--new', metavar='FirstLast',
                         help="create a new user")
-    parser.add_argument('--share', metavar='PATH',
+    parser.add_argument('-s', '--share', metavar='PATH',
                         help="recommend a song")
-    parser.add_argument('--incoming', action='store_true',
+    parser.add_argument('-i', '--incoming', action='store_true',
                         help="display the incoming songs")
-    parser.add_argument('--outgoing', action='store_true',
+    parser.add_argument('-o', '--outgoing', action='store_true',
                         help="display the outgoing songs")
-    parser.add_argument('--users', metavar='n', nargs='*',
+    parser.add_argument('-u' '--users', metavar='n', nargs='*',
                         help="limit the command to the specified usernames")
     # Hidden argument to test as a different user
     parser.add_argument('--test', metavar='FirstLast', help=argparse.SUPPRESS)

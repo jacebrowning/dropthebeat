@@ -23,7 +23,7 @@ setuptools.setup(
                                       'DropTheBeat = dtb.gui:main']},
 
 
-    long_description=open('README.rst').read(),
+    long_description=open('README.md').read(),
     license='LGPL',
 
     install_requires=["wheel", "PyYAML==3.10", "sqlalchemy==0.8.3"],
