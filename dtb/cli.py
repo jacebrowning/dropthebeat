@@ -62,7 +62,7 @@ def main(args=None):
                         help="display the incoming songs")
     parser.add_argument('-o', '--outgoing', action='store_true',
                         help="display the outgoing songs")
-    parser.add_argument('-u' '--users', metavar='n', nargs='*',
+    parser.add_argument('-u', '--users', metavar='n', nargs='*',
                         help="limit the command to the specified usernames")
     # Hidden argument to test as a different user
     parser.add_argument('--test', metavar='FirstLast', help=argparse.SUPPRESS)
