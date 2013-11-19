@@ -18,6 +18,7 @@ from dtb.test import FILES, EMPTY
 FAKESONG = os.path.join(FILES, 'FakeSong.mp3')
 FAKELINK = os.path.join(FILES, 'abc123.yml')
 FAKEFILE = os.path.join(FILES, 'FakeFile.yml')
+BADFAKEFILE = os.path.join(FILES, 'bad.yml')
 BROKENLINK = os.path.join(FILES, 'broken.yml')
 
 
@@ -30,6 +31,7 @@ class TestSong(unittest.TestCase):  # pylint: disable=R0904
         self.song = Song(FAKESONG, downloads=self.temp, friendname='Jace')
         self.link = Song(FAKELINK, downloads=self.temp, friendname='Jace')
         self.file = Song(FAKEFILE, downloads=self.temp, friendname='Jace')
+        self.bad = Song(BADFAKEFILE, downloads=self.temp, friendname='Jace')
         self.broken = Song(BROKENLINK, downloads=self.temp, friendname='Jace')
 
     def tearDown(self):
@@ -60,6 +62,10 @@ class TestSong(unittest.TestCase):  # pylint: disable=R0904
     def test_source_file(self):
         """Verify a non-link YAML file can be followed."""
         self.assertEqual(self.file.path, self.file.source)
+
+    def test_source_file_bad(self):
+        """Verify a non-link invalid YAML is handled."""
+        self.assertEqual(self.bad.path, self.bad.source)
 
     @patch('os.remove')
     def test_download_song(self, mock_remove):

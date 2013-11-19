@@ -112,8 +112,9 @@ class TestUser(unittest.TestCase):  # pylint: disable=R0904
 
     def test_path_downloads(self):
         """Verify a user's downloads path is correct."""
-        self.assertEqual(self.downloads, self.user.downloads)
-        self.assertTrue(os.path.isdir(self.downloads))
+        path = self.downloads
+        self.assertEqual(path, self.user.path_downloads)
+        self.assertTrue(os.path.isdir(path))
 
     def test_info(self):
         """Verify a user's info is correct."""
@@ -181,7 +182,7 @@ class TestUser(unittest.TestCase):  # pylint: disable=R0904
 
     def test_request(self):
         """Verify a user can request a song."""
-        # TODO: update test when feature implemented
+        # TODO: update this test when feature implemented
         self.assertRaises(NotImplementedError, self.user.request, None)
 
     def test_check(self):

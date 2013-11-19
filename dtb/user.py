@@ -86,6 +86,8 @@ class User(object):
         user.check()
         return user
 
+    ### properties based on path #############################################
+
     @property
     def name(self):
         """Get the name of the user's folder."""
@@ -126,6 +128,8 @@ class User(object):
         """Get the path to the user's requests file."""
         return os.path.join(self.path, User.SETTINGS)
 
+    ### properties based on files ############################################
+
     @property
     def info(self):
         """Get the user's information."""
@@ -137,9 +141,8 @@ class User(object):
                 username = data.get('username', None)
         return computer, username
 
-    # TODO: rename to path_downloads?
     @property
-    def downloads(self):
+    def path_downloads(self):
         """Get the user's download path."""
         path = None
         with open(self.path_settings, 'r') as settings:
@@ -170,7 +173,7 @@ class User(object):
                 friendpath = os.path.join(self.path, friendname)
                 for filename in os.listdir(friendpath):
                     filepath = os.path.join(friendpath, filename)
-                    song = Song(filepath, self.downloads, friendname)
+                    song = Song(filepath, self.path_downloads, friendname)
                     found = True
                     logging.debug("incoming: {}".format(song))
                     yield song
@@ -190,6 +193,8 @@ class User(object):
                     yield song
         if not found:
             logging.debug("no outgoing songs ({})".format(self.name))
+
+    ### methods ##############################################################
 
     def cleanup(self):
         """Delete all unlinked outgoing songs."""
@@ -212,7 +217,8 @@ class User(object):
         @param users: names of users or None for all
         """
         logging.info("recommending {}...".format(path))
-        path = shutil.copy(path, self.path_drops)  # TODO: use symlink
+        # TODO: create os-specific symlinks instead of copying the file
+        path = shutil.copy(path, self.path_drops)
         song = Song(path)
         for friend in self.friends:
             if not users or friend.name in users:
@@ -220,14 +226,16 @@ class User(object):
 
     def request(self, song):  # pragma: no cover - not implemented
         """Request a new song."""
-        raise NotImplementedError("TODO: implemented song requests")
+        raise NotImplementedError("TODO: implement song requests")
 
     def check(self):
         """Verify the user's directory is valid."""
         if not os.path.isdir(self.path):
             raise ValueError("not a directory: {}".format(self.path))
+        # TODO: also check self.path_library when library support is added
         for path in (self.path_private, self.path_drops, self.path_info,
-                     self.path_requests, self.path_settings, self.downloads):
+                     self.path_requests, self.path_settings,
+                     self.path_downloads):
             if not os.path.exists(path):
                 raise ValueError("missing path: {}".format(path))
 

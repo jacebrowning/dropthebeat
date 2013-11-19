@@ -42,7 +42,11 @@ class Song(object):
         if self.path.endswith('.yml'):
             with open(self.path, 'r') as yml:
                 text = yml.read()
-                data = yaml.load(text)  # TODO: handle parser errors
+                try:
+                    data = yaml.load(text)
+                except yaml.parser.ParserError:  # pylint: disable=E1101
+                    logging.warning("invalid YAML: {}".format(self.path))
+                    data = None
                 if data:
                     relpath = data.get('link', None)
                     if relpath:
@@ -55,7 +59,7 @@ class Song(object):
 
     def download(self):
         """Move the song to the user's downlod directory."""
-        assert self.downloads  # TODO: add a better error
+        assert self.downloads  # only called in cases where downloads is set
         # Determine if the song file is actually a link
         src = self.source
         # Move the file or copy from the link
