@@ -25,9 +25,9 @@ class User(object):
     LIBRARY = os.path.join(PRIVATE, 'library.sqlite3')
     DROPS = os.path.join(PRIVATE, 'drops')
 
-    def __init__(self, path, check=True):
+    def __init__(self, path, _check=True):
         self.path = path
-        if check:
+        if _check:
             self.check()
 
     def __str__(self):
@@ -40,14 +40,21 @@ class User(object):
         return not (self == other)
 
     @staticmethod
-    def new(share, name):
-        """Create a new user in the share location."""
+    def new(root, name, downloads=None):
+        """Create a new user in the share location.
+        @param share: path to root of sharing directory
+        @param name: name of user's sharing folder
+        @param downloads: path to user's downloads directory
+
+        @return: new User
+        """
         logging.debug("creating user '{}'...".format(name))
-        path = os.path.join(share, name)
+        path = os.path.join(root, name)
         if os.path.exists(path):
             raise EnvironmentError("user already exists: {}".format(path))
+        downloads = downloads or os.path.expanduser('~/Downloads')
         # Create a new user
-        user = User(path, check=False)
+        user = User(path, _check=False)
         # Create directories
         os.makedirs(user.path_private)
         os.makedirs(user.path_drops)
@@ -60,7 +67,7 @@ class User(object):
             outfile.write(text)
         # Create settings
         with open(user.path_settings, 'w') as outfile:
-            data = {'downloads': os.path.expanduser('~/Downloads')}
+            data = {'downloads': downloads}
             text = yaml.dump(data, default_flow_style=False)
             outfile.write(text)
         # Create requests
@@ -69,8 +76,8 @@ class User(object):
             text = yaml.dump(data, default_flow_style=False)
             outfile.write(text)
         # Create folders for friends
-        for name in os.listdir(share):
-            friendpath = os.path.join(share, name)
+        for name in os.listdir(root):
+            friendpath = os.path.join(root, name)
             if name != user.name and os.path.isdir(friendpath):
                 os.mkdir(os.path.join(user.path, name))
                 os.mkdir(os.path.join(friendpath, user.name))
@@ -130,6 +137,7 @@ class User(object):
                 username = data.get('username', None)
         return computer, username
 
+    # TODO: rename to path_downloads?
     @property
     def downloads(self):
         """Get the user's download path."""
@@ -219,7 +227,7 @@ class User(object):
         if not os.path.isdir(self.path):
             raise ValueError("not a directory: {}".format(self.path))
         for path in (self.path_private, self.path_drops, self.path_info,
-                     self.path_requests, self.path_settings):
+                     self.path_requests, self.path_settings, self.downloads):
             if not os.path.exists(path):
                 raise ValueError("missing path: {}".format(path))
 
@@ -239,12 +247,17 @@ def get_info():
     return socket.gethostname(), getpass.getuser()
 
 
-def get_current(share):
-    """Get the current user based on this computer's information."""
+def get_current(root):
+    """Get the current user based on this computer's information.
+
+    @param root: path to root of sharing directory
+
+    @return: current User
+    """
     info = get_info()
-    logging.debug("looking for {} in {}...".format(info, share))
-    for directory in os.listdir(share):
-        path = os.path.join(share, directory)
+    logging.debug("looking for {} in {}...".format(info, root))
+    for directory in os.listdir(root):
+        path = os.path.join(root, directory)
         try:
             user = User(path)
         except ValueError as err:
@@ -254,4 +267,4 @@ def get_current(share):
                 logging.info("found user: {}".format(user))
                 return user
 
-    raise EnvironmentError("{} not found in {}".format(info, share))
+    raise EnvironmentError("{} not found in {}".format(info, root))

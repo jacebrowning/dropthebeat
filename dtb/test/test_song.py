@@ -8,6 +8,8 @@ import unittest
 from unittest.mock import patch, Mock
 
 import os
+import tempfile
+import shutil
 
 from dtb.song import Song
 
@@ -23,13 +25,15 @@ class TestSong(unittest.TestCase):  # pylint: disable=R0904
     """Unit tests for the Song class."""  # pylint: disable=C0103,W0212
 
     def setUp(self):
+        self.temp = tempfile.mkdtemp()
         self.song_min = Song(FAKESONG)  # TODO: which tests for this object?
-        self.song = Song(FAKESONG, downloads=EMPTY, friendname='Jace')
-        self.link = Song(FAKELINK, downloads=EMPTY, friendname='Jace')
-        self.file = Song(FAKEFILE, downloads=EMPTY, friendname='Jace')
-        self.broken = Song(BROKENLINK, downloads=EMPTY, friendname='Jace')
+        self.song = Song(FAKESONG, downloads=self.temp, friendname='Jace')
+        self.link = Song(FAKELINK, downloads=self.temp, friendname='Jace')
+        self.file = Song(FAKEFILE, downloads=self.temp, friendname='Jace')
+        self.broken = Song(BROKENLINK, downloads=self.temp, friendname='Jace')
 
     def tearDown(self):
+        shutil.rmtree(self.temp)
         for name in os.listdir(EMPTY):
             os.remove(os.path.join(EMPTY, name))
 
@@ -61,7 +65,7 @@ class TestSong(unittest.TestCase):  # pylint: disable=R0904
     def test_download_song(self, mock_remove):
         """Verify a song can be downloaded."""
         self.song.download()
-        path = os.path.join(EMPTY, 'FakeSong.mp3')
+        path = os.path.join(self.temp, 'FakeSong.mp3')
         self.assertTrue(os.path.isfile(path))
         mock_remove.assert_called_once_with(self.song.path)
 
@@ -69,7 +73,7 @@ class TestSong(unittest.TestCase):  # pylint: disable=R0904
     def test_download_link(self, mock_remove):
         """Verify a linked song can be downloaded."""
         self.link.download()
-        path = os.path.join(EMPTY, 'FakeSong.mp3')
+        path = os.path.join(self.temp, 'FakeSong.mp3')
         self.assertTrue(os.path.isfile(path))
         mock_remove.assert_called_once_with(self.link.path)
 
@@ -77,7 +81,7 @@ class TestSong(unittest.TestCase):  # pylint: disable=R0904
     def test_download_broken(self, mock_remove):
         """Verify a broken link cannot be downloaded."""
         self.broken.download()
-        self.assertEqual(0, len(os.listdir(EMPTY)))
+        self.assertEqual(0, len(os.listdir(self.temp)))
         mock_remove.assert_called_once_with(self.broken.path)
 
     @patch('os.remove', Mock(side_effect=IOError))
