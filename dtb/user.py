@@ -25,52 +25,105 @@ class User(object):
     LIBRARY = os.path.join(PRIVATE, 'library.sqlite3')
     DROPS = os.path.join(PRIVATE, 'drops')
 
-    def __init__(self, path):
+    def __init__(self, path, check=True):
         self.path = path
-        self.share, self.name = os.path.split(self.path)
+        if check:
+            self.check()
 
     def __str__(self):
         return str(self.path)
 
+    def __eq__(self, other):
+        return self.path == other.path
+
+    def __ne__(self, other):
+        return not (self == other)
+
     @staticmethod
     def new(share, name):
         """Create a new user in the share location."""
+        logging.debug("creating user '{}'...".format(name))
         path = os.path.join(share, name)
         if os.path.exists(path):
             raise EnvironmentError("user already exists: {}".format(path))
-        private = os.path.join(path, User.PRIVATE)
-        drops = os.path.join(path, User.DROPS)
+        # Create a new user
+        user = User(path, check=False)
         # Create directories
-        os.makedirs(private)
-        os.makedirs(drops)
+        os.makedirs(user.path_private)
+        os.makedirs(user.path_drops)
         # Create info
-        with open(os.path.join(path, User.INFO), 'w') as config:
+        with open(user.path_info, 'w') as outfile:
             info = get_info()
             data = {'computer': info[0],
                     'username': info[1]}
-            config.write(yaml.dump(data, default_flow_style=False))
+            text = yaml.dump(data, default_flow_style=False)
+            outfile.write(text)
         # Create settings
-        with open(os.path.join(path, User.SETTINGS), 'w') as config:
+        with open(user.path_settings, 'w') as outfile:
             data = {'downloads': os.path.expanduser('~/Downloads')}
-            config.write(yaml.dump(data, default_flow_style=False))
-        # Create request
-        with open(os.path.join(path, User.REQUESTS), 'w') as requests:
+            text = yaml.dump(data, default_flow_style=False)
+            outfile.write(text)
+        # Create requests
+        with open(user.path_requests, 'w') as outfile:
             data = []
-            requests.write(yaml.dump(data, default_flow_style=False))
+            text = yaml.dump(data, default_flow_style=False)
+            outfile.write(text)
         # Create folders for friends
-        friends = [d for d in os.listdir(share) if d != name]
-        for friend in friends:
-            os.mkdir(os.path.join(path, friend))
-            os.mkdir(os.path.join(share, friend, name))
+        for name in os.listdir(share):
+            friendpath = os.path.join(share, name)
+            if name != user.name and os.path.isdir(friendpath):
+                os.mkdir(os.path.join(user.path, name))
+                os.mkdir(os.path.join(friendpath, user.name))
         # Return the new user
-        return User(path)
+        logging.info("created user: {}".format(user))
+        user.check()
+        return user
+
+    @property
+    def name(self):
+        """Get the name of the user's folder."""
+        return os.path.split(self.path)[1]
+
+    @property
+    def root(self):
+        """Get the path to root of the sharing directory."""
+        return os.path.split(self.path)[0]
+
+    @property
+    def path_private(self):
+        """Get the path to the user's private directory."""
+        return os.path.join(self.path, User.PRIVATE)
+
+    @property
+    def path_drops(self):
+        """Get the path to the user's drops directory."""
+        return os.path.join(self.path, User.DROPS)
+
+    @property
+    def path_info(self):
+        """Get the path to the user's information file."""
+        return os.path.join(self.path, User.INFO)
+
+    @property
+    def path_library(self):
+        """Get the path to the user's library file."""
+        return os.path.join(self.path, User.LIBRARY)
+
+    @property
+    def path_requests(self):
+        """Get the path to the user's requests file."""
+        return os.path.join(self.path, User.REQUESTS)
+
+    @property
+    def path_settings(self):
+        """Get the path to the user's requests file."""
+        return os.path.join(self.path, User.SETTINGS)
 
     @property
     def info(self):
         """Get the user's information."""
         computer = username = None
-        path = os.path.join(self.path, User.INFO)
-        with open(path, 'r') as config:
+        with open(self.path_info, 'r') as config:
             data = yaml.load(config.read())
             if data:
                 computer = data.get('computer', None)
@@ -81,7 +134,7 @@ class User(object):
     def downloads(self):
         """Get the user's download path."""
         path = None
-        with open(os.path.join(self.path, User.SETTINGS), 'r') as settings:
+        with open(self.path_settings, 'r') as settings:
             data = yaml.load(settings.read())
             if data:
                 path = data.get('downloads', None)
@@ -90,15 +143,20 @@ class User(object):
     @property
     def friends(self):
         """Iterate through the user's friends."""
-        for name in os.listdir(self.share):
-            if name != self.name:
-                yield User(os.path.join(self.share, name))
+        for directory in os.listdir(self.root):
+            try:
+                user = User(os.path.join(self.root, directory))
+            except ValueError as err:
+                logging.warning("invalid user ({})".format(err))
+            else:
+                if user.name != self.name:
+                    yield user
 
     @property
     def incoming(self):
         """Iterate through the list of incoming songs."""
         found = False
-        logging.debug("looking for incoming songs...")
+        logging.debug("looking for incoming songs ({})...".format(self.name))
         for friendname in os.listdir(self.path):
             if friendname != User.PRIVATE:
                 friendpath = os.path.join(self.path, friendname)
@@ -109,13 +167,13 @@ class User(object):
                     logging.debug("incoming: {}".format(song))
                     yield song
         if not found:
-            logging.debug("no incoming songs")
+            logging.debug("no incoming songs ({})".format(self.name))
 
     @property
     def outgoing(self):
         """Iterate through the list of outgoing songs."""
         found = False
-        logging.debug("looking for outgoing songs...")
+        logging.debug("looking for outgoing songs ({})...".format(self.name))
         for friend in self.friends:
             for song in friend.incoming:
                 if song.friendname == self.name:
@@ -123,24 +181,57 @@ class User(object):
                     logging.debug("outoing: {}".format(song))
                     yield song
         if not found:
-            logging.debug("no outgoing songs")
+            logging.debug("no outgoing songs ({})".format(self.name))
+
+    def cleanup(self):
+        """Delete all unlinked outgoing songs."""
+        logging.info("cleaning up unlinked songs...")
+        paths = [os.path.join(self.path_drops, filename)
+                 for filename in os.listdir(self.path_drops)]
+        for song in self.outgoing:
+            try:
+                paths.remove(song.source)
+            except ValueError:
+                pass
+        for path in paths:
+            logging.info("deleting unlinked: {}".format(path))
+            os.remove(path)
 
     def recommend(self, path, users=None):
-        """Recommend a song to a list of users."""
+        """Recommend a song to a list of users.
+
+        @param path: path to file
+        @param users: names of users or None for all
+        """
         logging.info("recommending {}...".format(path))
-        drops = os.path.join(self.path, User.DROPS)
-        song = Song(shutil.copy(path, drops))  # TODO: symlink instead of copy
+        path = shutil.copy(path, self.path_drops)  # TODO: use symlink
+        song = Song(path)
         for friend in self.friends:
-            if not users or friend in users:
+            if not users or friend.name in users:
                 song.link(os.path.join(friend.path, self.name))
 
     def request(self, song):  # pragma: no cover - not implemented
         """Request a new song."""
         raise NotImplementedError("TODO: implemented song requests")
 
+    def check(self):
+        """Verify the user's directory is valid."""
+        if not os.path.isdir(self.path):
+            raise ValueError("not a directory: {}".format(self.path))
+        for path in (self.path_private, self.path_drops, self.path_info,
+                     self.path_requests, self.path_settings):
+            if not os.path.exists(path):
+                raise ValueError("missing path: {}".format(path))
+
     def delete(self):  # pragma: no cover - not implemented
         """Delete the user."""
-        raise NotImplementedError("TODO: implement user deletion")
+        for friend in self.friends:
+            path = os.path.join(friend.path, self.name)
+            if os.path.exists(path):
+                logging.info("deleting {}...".format(path))
+                shutil.rmtree(path)
+        logging.info("deleting {}...".format(self.path))
+        shutil.rmtree(self.path)
 
 
 def get_info():
@@ -154,9 +245,13 @@ def get_current(share):
     logging.debug("looking for {} in {}...".format(info, share))
     for directory in os.listdir(share):
         path = os.path.join(share, directory)
-        user = User(path)
-        if user.info == info:
-            logging.info("found user: {}".format(user))
-            return user
+        try:
+            user = User(path)
+        except ValueError as err:
+            logging.warning("invalid user ({})".format(err))
+        else:
+            if user.info == info:
+                logging.info("found user: {}".format(user))
+                return user
 
     raise EnvironmentError("{} not found in {}".format(info, share))

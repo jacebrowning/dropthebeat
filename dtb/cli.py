@@ -54,8 +54,6 @@ def main(args=None):
                         help="launch the GUI")
     parser.add_argument('-d', '--daemon', action='store_true',
                         help="if terminal mode, run forever")
-    parser.add_argument('-n', '--new', metavar='FirstLast',
-                        help="create a new user")
     parser.add_argument('-s', '--share', metavar='PATH',
                         help="recommend a song")
     parser.add_argument('-i', '--incoming', action='store_true',
@@ -63,8 +61,12 @@ def main(args=None):
     parser.add_argument('-o', '--outgoing', action='store_true',
                         help="display the outgoing songs")
     parser.add_argument('-u', '--users', metavar='n', nargs='*',
-                        help="limit the command to the specified usernames")
-    # Hidden argument to test as a different user
+                        help="filter to the specified usernames")
+    parser.add_argument('-n', '--new', metavar='FirstLast',
+                        help="create a new user")
+    parser.add_argument('-x', '--delete', action='store_true',
+                        help="delete the current user")
+    # Hidden arguments
     parser.add_argument('--test', metavar='FirstLast', help=argparse.SUPPRESS)
 
     # Parse arguments
@@ -125,13 +127,16 @@ def _run(args, cwd, err):  # pylint: disable=W0613
             logging.error(error)
             return False
         else:
-            logging.info("created: {}".format(this))
             return True
 
     if args.test:
         this = user.User(os.path.join(root, args.test))
     else:
         this = user.get_current(root)
+
+    if args.delete:
+        this.delete()
+        return True
 
     if args.share:
         this.recommend(args.share, args.users)
@@ -143,6 +148,7 @@ def _run(args, cwd, err):  # pylint: disable=W0613
         return True
 
     if args.outgoing:
+        this.cleanup()
         for song in this.outgoing:
             print(song)
         return True

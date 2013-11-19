@@ -21,7 +21,7 @@ class Song(object):
         self.friendname = friendname
 
     def __str__(self):
-        return str(self.path)  # TODO: add link following
+        return str(self.path)
 
     def link(self, dirpath):
         """Create a link to the song in the specified directory."""
@@ -35,11 +35,10 @@ class Song(object):
             data = {'link': relpath}
             link.write(yaml.dump(data, default_flow_style=False))
 
-    def download(self):
-        """Move the song to the user's downlod directory."""
-        assert self.downloads  # TODO: add a better error
+    @property
+    def source(self):
+        """If the song is a link, return its source. Otherwise its path."""
         src = self.path
-        # Determine if the song file is actually a link
         if self.path.endswith('.yml'):
             with open(self.path, 'r') as yml:
                 text = yml.read()
@@ -52,6 +51,13 @@ class Song(object):
                         src = os.path.normpath(path)
                     else:
                         logging.debug("non-link YAML: {}".format(self.path))
+        return src
+
+    def download(self):
+        """Move the song to the user's downlod directory."""
+        assert self.downloads  # TODO: add a better error
+        # Determine if the song file is actually a link
+        src = self.source
         # Move the file or copy from the link
         try:
             if src == self.path:
