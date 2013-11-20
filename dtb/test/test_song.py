@@ -43,7 +43,8 @@ class TestSong(unittest.TestCase):  # pylint: disable=R0904
     def test_link(self):
         """Verify a link to a song can be created."""
         self.song.link(EMPTY)
-        link = Song(os.path.join(EMPTY, os.listdir(EMPTY)[-1]))
+        filename = [f for f in os.listdir(EMPTY) if f.endswith('.yml')][0]
+        link = Song(os.path.join(EMPTY, filename))
         self.assertEqual(link.source, self.song.path)
         self.assertTrue(os.path.isfile(link.path))
 
