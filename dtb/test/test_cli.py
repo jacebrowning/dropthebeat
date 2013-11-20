@@ -83,9 +83,9 @@ class TestCLI(unittest.TestCase):  # pylint: disable=R0904
         self.set_downloads('JohnDoe')
         self.set_downloads('JaceBrowning')
         # Share a song
-        self.dtb('--share', FAKESONG)
+        self.dtb('--share', FAKESONG, '--test', 'JaceBrowning')
         # Show the shared song
-        self.dtb('--outgoing')
+        self.dtb('--outgoing', '--test', 'JaceBrowning')
         # Download the shared song (1)
         self.dtb('--incoming', '--test', 'JaneDoe')
         self.dtb('--test', 'JaneDoe')
@@ -96,7 +96,7 @@ class TestCLI(unittest.TestCase):  # pylint: disable=R0904
         self.dtb('--test', 'JohnDoe')
         self.ls(self.downloads, 'FakeSong.mp3')
         # Show that no more songs are shared
-        self.dtb('--outgoing')
+        self.dtb('--outgoing', '--test', 'JaceBrowning')
 
     @patch('time.sleep', Mock(side_effect=KeyboardInterrupt))
     def test_interrupt_daemon(self):
