@@ -33,7 +33,8 @@ class TestSong(unittest.TestCase):  # pylint: disable=R0904
     def tearDown(self):
         shutil.rmtree(self.temp)
         for name in os.listdir(EMPTY):
-            os.remove(os.path.join(EMPTY, name))
+            if name != '.gitignore':
+                os.remove(os.path.join(EMPTY, name))
 
     def test_str(self):
         """Verify a song can be converted to string."""
@@ -42,7 +43,7 @@ class TestSong(unittest.TestCase):  # pylint: disable=R0904
     def test_link(self):
         """Verify a link to a song can be created."""
         self.song.link(EMPTY)
-        link = Song(os.path.join(EMPTY, os.listdir(EMPTY)[0]))
+        link = Song(os.path.join(EMPTY, os.listdir(EMPTY)[-1]))
         self.assertEqual(link.source, self.song.path)
         self.assertTrue(os.path.isfile(link.path))
 
