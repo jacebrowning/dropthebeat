@@ -43,7 +43,7 @@ def _default_top():
     username = getpass.getuser()
     for root in ROOTS:
         path = os.path.join(root, username)
-        if os.path.isdir(path):
+        if os.path.isdir(path):  # pragma: no cover - manual test
             return path
 
     raise EnvironmentError("no home found for '{}'".format(username))
