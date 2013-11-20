@@ -68,14 +68,16 @@ endif
 
 .PHONY: doc
 doc: depends
-	pandoc --from=markdown --to=rst --output=README.rst README.md
-	$(PYTHON) $(RST2HTML) README.rst docs/README.html
+	pandoc -f markdown_github -t rst -o README.rst README.md
+	pandoc -f markdown_github -t html -o docs/README-github.html README.md
+	$(PYTHON) $(RST2HTML) README.rst docs/README-pypi.html
 	$(PYTHON) $(PDOC) --html --overwrite $(PACKAGE) --html-dir apidocs
 
-.PHONY: doc-open
-doc-open: doc
-	$(OPEN) docs/README.html
+.PHONY: read
+read: doc
 	$(OPEN) apidocs/$(PACKAGE)/index.html
+	$(OPEN) docs/README-pypi.html
+	$(OPEN) docs/README-github.html
 
 # Static Analysis ############################################################
 

@@ -7,7 +7,7 @@ env
 
 apidocs
 README.rst
-docs/README.html
+docs/README*.html
 
 .coverage
 

@@ -7,8 +7,8 @@ Features
 --------
 
 * Recommend songs to friends
-* Get a list of songs recommended by friends
-* Ignore or download the songs to your computer
+* Get a list of songs shared by friends
+* Download the songs to your computer
 
 
 
@@ -40,8 +40,16 @@ Initial Setup
 2. Share this folder with your friends
 
 
+Graphical Interface
+===================
+
+Start the app:
+
+    DropTheBeat
+
+
 Command-line Inteface
----------------------
+=====================
 
 Create your user folder:
 
@@ -67,17 +75,8 @@ Launch the GUI:
     dtb --gui
 
 
-Graphical Interface
--------------------
-
-Start the app:
-
-    DropTheBeat
-
-
-
-Development
-===========
+For Developers
+==============
 
 Requirements
 ------------
