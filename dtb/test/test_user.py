@@ -177,6 +177,7 @@ class TestUser(unittest.TestCase):  # pylint: disable=R0904
         self.user.recommend(FAKESONG)
         path2 = os.path.join(self.user2.path, self.name)
         path3 = os.path.join(self.user3.path, self.name)
+        self.assertEqual(2, len(MockSong.link.call_args_list))
         self.assertIn(call(path2), MockSong.link.call_args_list)
         self.assertIn(call(path3), MockSong.link.call_args_list)
 
