@@ -22,7 +22,6 @@ setuptools.setup(
     entry_points={'console_scripts': [CLI + ' = dtb.cli:main',
                                       'DropTheBeat = dtb.gui:main']},
 
-
     long_description=open('README.md').read(),
     license='LGPL',
 

@@ -122,55 +122,77 @@ def _run(args, cwd, err):  # pylint: disable=W0613
     """
     root = args.root or share.find()
 
+    # Create a new user and exit
     if args.new:
-        try:
-            this = user.User.new(root, args.new)
-        except EnvironmentError as error:
-            logging.error(error)
-            return False
-        else:
-            return True
+        return _new(args.new, root)
 
+    # Get the current user
     if args.test:
         this = user.User(os.path.join(root, args.test))
     else:
         this = user.get_current(root)
 
+    # Delete user and exit
     if args.delete:
         this.delete()
+        print("deleted: {}".format(this))
         return True
 
-    if args.share:
-        this.recommend(args.share, args.users)
+    # Display incoming, share a song, and/or display outoing and exit
+    if any((args.incoming, args.share, args.outgoing)):
+
+        if args.incoming:
+            logging.info("displaying incoming songs...")
+            for song in this.incoming:
+                print("incoming: {}".format(song))
+
+        if args.share:
+            path = os.path.abspath(args.share)
+            song = this.recommend(path, args.users)
+            print("shared: {}".format(path))
+
+        if args.outgoing:
+            this.cleanup()
+            logging.info("displaying outgoing songs...")
+            for song in this.outgoing:
+                print("outgoing: {}".format(song))
+
         return True
 
-    if args.incoming:
-        logging.info("displaying incoming songs...")
-        for song in this.incoming:
-            print(song)
-        return True
-
-    if args.outgoing:
-        this.cleanup()
-        logging.info("displaying outgoing songs...")
-        for song in this.outgoing:
-            print(song)
-        return True
-
+    # Run the main GUI or command-line interface
     if args.gui:
         logging.info("launching the GUI...")
         return gui.main()
     else:
-        while True:
-            for song in this.incoming:
-                song.download()
-            if args.daemon:
-                logging.debug("daemon sleeping for 5 seconds...")
-                time.sleep(5)
-            else:
-                break
-        return True
+        logging.info("starting the main loop...")
+        return _loop(this, args.daemon)
 
+
+def _new(name, root):
+    """Create a new user."""
+    try:
+        this = user.User.new(root, name)
+        print("created: {}".format(this))
+    except EnvironmentError as error:
+        logging.error(error)
+        return False
+
+    return True
+
+def _loop(this, daemon):
+    """Run the main CLI loop."""
+    while True:
+        for song in this.incoming:
+            path = song.download()
+            if path:
+                print("downloaded: {}".format(path))
+        if daemon:
+            logging.debug("daemon sleeping for 5 seconds...")
+            time.sleep(5)
+        else:
+            break
+
+    return True
 
 
 if __name__ == '__main__':  # pragma: no cover, manual test

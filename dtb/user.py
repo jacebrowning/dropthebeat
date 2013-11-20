@@ -158,7 +158,7 @@ class User(object):
             try:
                 user = User(os.path.join(self.root, directory))
             except ValueError as err:
-                logging.warning("invalid user ({})".format(err))
+                logging.debug("invalid user: {}".format(err))
             else:
                 if user.name != self.name:
                     yield user
@@ -215,6 +215,8 @@ class User(object):
 
         @param path: path to file
         @param users: names of users or None for all
+
+        @return: shared Song
         """
         logging.info("recommending {}...".format(path))
         # TODO: create os-specific symlinks instead of copying the file
@@ -223,6 +225,7 @@ class User(object):
         for friend in self.friends:
             if not users or friend.name in users:
                 song.link(os.path.join(friend.path, self.name))
+        return song
 
     def request(self, song):  # pragma: no cover - not implemented
         """Request a new song."""
@@ -270,7 +273,7 @@ def get_current(root):
         try:
             user = User(path)
         except ValueError as err:
-            logging.warning("invalid user ({})".format(err))
+            logging.debug("invalid user: {}".format(err))
         else:
             if user.info == info:
                 logging.info("found user: {}".format(user))

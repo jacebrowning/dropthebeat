@@ -46,6 +46,12 @@ class TestSong(unittest.TestCase):  # pylint: disable=R0904
         self.assertEqual(link.source, self.song.path)
         self.assertTrue(os.path.isfile(link.path))
 
+    def test_link_missing_directory(self):
+        """Verify a link can be created even when the directory is gone."""
+        temp = tempfile.mkdtemp()
+        shutil.rmtree(temp)
+        self.song.link(temp)
+
     def test_source_song(self):
         """Verify a direct song can be followed."""
         self.assertEqual(self.song.path, self.link.source)

@@ -7,6 +7,7 @@ Classes and functions to interact with songs.
 import os
 import shutil
 import hashlib
+import base64
 import logging
 
 import yaml
@@ -25,10 +26,14 @@ class Song(object):
 
     def link(self, dirpath):
         """Create a link to the song in the specified directory."""
+        if not os.path.isdir(dirpath):
+            logging.warning("creating missing folder: {}".format(dirpath))
+            os.makedirs(dirpath)
         relpath = os.path.relpath(self.path, dirpath)
         md5 = hashlib.md5()
         md5.update(relpath.encode('utf-8'))
-        filename = "{}.yml".format(md5.hexdigest())
+        base = base64.urlsafe_b64encode(md5.digest()).decode('utf-8')
+        filename = "{}.yml".format(base)
         path = os.path.join(dirpath, filename)
         logging.info("creating link {}...".format(path))
         with open(path, 'w') as link:
@@ -58,21 +63,25 @@ class Song(object):
         return src
 
     def download(self):
-        """Move the song to the user's downlod directory."""
+        """Move the song to the user's downlod directory.
+
+        @return: path to downloaded file or None on broken links
+        """
         assert self.downloads  # only called in cases where downloads is set
         # Determine if the song file is actually a link
         src = self.source
+        dst = None
         # Move the file or copy from the link
         try:
             if src == self.path:
                 logging.info("moving {}...".format(src, self.downloads))
                 # Copy then delete in case the opperation is cancelled
-                shutil.copy(src, self.downloads)
+                dst = shutil.copy(src, self.downloads)
                 os.remove(src)
             else:
                 if os.path.exists(src):
                     logging.info("copying {}...".format(src, self.downloads))
-                    shutil.copy(src, self.downloads)
+                    dst = shutil.copy(src, self.downloads)
                     os.remove(self.path)
                 else:
                     logging.debug("unknown link target: {}".format(src))
@@ -80,6 +89,7 @@ class Song(object):
                     os.remove(self.path)
         except IOError as error:
             logging.warning(error)
+        return dst
 
     def ignore(self):
         """Delete the song."""
