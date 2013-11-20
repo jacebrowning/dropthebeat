@@ -8,6 +8,8 @@ import unittest
 from unittest.mock import patch, Mock
 
 import os
+import tempfile
+import shutil
 
 from dtb import share
 
@@ -19,8 +21,13 @@ class TestFunctions(unittest.TestCase):  # pylint: disable=R0904
 
     def test_find(self):
         """Verify a sharing folder can be found."""
-        path = share.find()
-        self.assertTrue(os.path.isdir(path))
+        temp = tempfile.mkdtemp()
+        os.makedirs(os.path.join(temp, 'Dropbox', 'DropTheBeat'))
+        try:
+            path = share.find(top=temp)
+            self.assertTrue(os.path.isdir(path))
+        finally:
+            shutil.rmtree(temp)
 
     @patch('os.path.isdir', Mock(return_value=False))
     def test_find_no_home(self):
