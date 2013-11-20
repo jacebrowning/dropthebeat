@@ -2,4 +2,11 @@ language: python
 python:
   - "3.3"
   - "3.2"
+before_script:
+  - uname -a 
+  - cat /etc/lsb-release
+  - sudo apt-get install cabal-install
+  - cabal update
+  - cabal install pandoc
+  - export PATH=~/.cabal/bin:$PATH
 script:  make tests
