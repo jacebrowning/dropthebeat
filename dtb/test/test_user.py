@@ -189,11 +189,20 @@ class TestUser(unittest.TestCase):  # pylint: disable=R0904
         """Verify a user can be checked."""
         self.user.check()
 
-    def test_check_error(self):
+    def test_check_file_error(self):
         """Verify a user fails the check with a missing files."""
         user = User.new(self.root, '_temp')
         try:
             os.remove(user.path_info)
+            self.assertRaises(ValueError, user.check)
+        finally:
+            user.delete()
+
+    def test_check_folder_error(self):
+        """Verify a user fails the check with a missing folders."""
+        user = User.new(self.root, '_temp')
+        try:
+            shutil.rmtree(user.path_drops)
             self.assertRaises(ValueError, user.check)
         finally:
             user.delete()

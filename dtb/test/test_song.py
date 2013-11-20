@@ -13,13 +13,10 @@ import shutil
 
 from dtb.song import Song
 
-from dtb.test import FILES, EMPTY
+from dtb.test import EMPTY
+from dtb.test import FAKESONG, FAKELINK, FAKEFILE, BADFAKEFILE, BROKENLINK
 
-FAKESONG = os.path.join(FILES, 'FakeSong.mp3')
-FAKELINK = os.path.join(FILES, 'abc123.yml')
-FAKEFILE = os.path.join(FILES, 'FakeFile.yml')
-BADFAKEFILE = os.path.join(FILES, 'bad.yml')
-BROKENLINK = os.path.join(FILES, 'broken.yml')
+
 
 
 class TestSong(unittest.TestCase):  # pylint: disable=R0904
@@ -27,7 +24,6 @@ class TestSong(unittest.TestCase):  # pylint: disable=R0904
 
     def setUp(self):
         self.temp = tempfile.mkdtemp()
-        self.song_min = Song(FAKESONG)  # TODO: which tests for this object?
         self.song = Song(FAKESONG, downloads=self.temp, friendname='Jace')
         self.link = Song(FAKELINK, downloads=self.temp, friendname='Jace')
         self.file = Song(FAKEFILE, downloads=self.temp, friendname='Jace')
@@ -46,8 +42,7 @@ class TestSong(unittest.TestCase):  # pylint: disable=R0904
     def test_link(self):
         """Verify a link to a song can be created."""
         self.song.link(EMPTY)
-        link = Song(os.path.join(EMPTY,
-                                 '1c2b6dab7ed53e4b6fc0f0e5a1043f75.yml'))
+        link = Song(os.path.join(EMPTY, os.listdir(EMPTY)[0]))
         self.assertEqual(link.source, self.song.path)
         self.assertTrue(os.path.isfile(link.path))
 

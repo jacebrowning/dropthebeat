@@ -232,12 +232,13 @@ class User(object):
         """Verify the user's directory is valid."""
         if not os.path.isdir(self.path):
             raise ValueError("not a directory: {}".format(self.path))
+        for path in (self.path_private, self.path_drops):
+            if not os.path.isdir(path):
+                raise ValueError("missing folder: {}".format(path))
         # TODO: also check self.path_library when library support is added
-        for path in (self.path_private, self.path_drops, self.path_info,
-                     self.path_requests, self.path_settings,
-                     self.path_downloads):
-            if not os.path.exists(path):
-                raise ValueError("missing path: {}".format(path))
+        for path in (self.path_info, self.path_requests, self.path_settings):
+            if not os.path.isfile(path):
+                raise ValueError("missing file: {}".format(path))
 
     def delete(self):  # pragma: no cover - not implemented
         """Delete the user."""

@@ -66,7 +66,9 @@ def main(args=None):
                         help="create a new user")
     parser.add_argument('-x', '--delete', action='store_true',
                         help="delete the current user")
-    # Hidden arguments
+    # Hidden argument to override the root sharing directory path
+    parser.add_argument('--root', metavar="PATH", help=argparse.SUPPRESS)
+    # Hidden argument to run the program as a different user
     parser.add_argument('--test', metavar='FirstLast', help=argparse.SUPPRESS)
 
     # Parse arguments
@@ -118,7 +120,7 @@ def _run(args, cwd, err):  # pylint: disable=W0613
     @param cwd: current working directory
     @param err: function to call for CLI errors
     """
-    root = share.find()
+    root = args.root or share.find()
 
     if args.new:
         try:
@@ -143,17 +145,22 @@ def _run(args, cwd, err):  # pylint: disable=W0613
         return True
 
     if args.incoming:
+        logging.info("displaying incoming songs...")
         for song in this.incoming:
             print(song)
         return True
 
     if args.outgoing:
         this.cleanup()
+        logging.info("displaying outgoing songs...")
         for song in this.outgoing:
             print(song)
         return True
 
-    if not args.gui:
+    if args.gui:
+        logging.info("launching the GUI...")
+        return gui.main()
+    else:
         while True:
             for song in this.incoming:
                 song.download()
@@ -163,8 +170,7 @@ def _run(args, cwd, err):  # pylint: disable=W0613
             else:
                 break
         return True
-    else:
-        return gui.main()
+
 
 
 if __name__ == '__main__':  # pragma: no cover, manual test
