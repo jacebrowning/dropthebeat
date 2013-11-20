@@ -36,7 +36,6 @@ all: develop
 .PHONY: develop
 develop: .env $(EGG_INFO)
 $(EGG_INFO): $(SOURCES)
-	pandoc --from=markdown --to=rst --output=README.rst README.md
 	$(PYTHON) setup.py develop
 	touch $(EGG_INFO)  # flag to indicate package is installed
 
@@ -69,6 +68,7 @@ endif
 
 .PHONY: doc
 doc: depends
+	pandoc --from=markdown --to=rst --output=README.rst README.md
 	$(PYTHON) $(RST2HTML) README.rst docs/README.html
 	$(PYTHON) $(PDOC) --html --overwrite $(PACKAGE) --html-dir apidocs
 

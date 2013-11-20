@@ -43,7 +43,7 @@ Initial Setup
 Command-line Inteface
 ---------------------
 
-	# Create a user
+	# Create your user folder
     dtb --new <FirstLast>
 
 	# Recommend a song to friends
@@ -77,5 +77,4 @@ Requirements
 ------------
 * GNU Make (or Cygwin Make): http://www.gnu.org/software/make/
 * Pandoc: http://johnmacfarlane.net/pandoc/
-
-
+* virtualenv: https://pypi.python.org/pypi/virtualenv
