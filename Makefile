@@ -8,14 +8,16 @@ DEPENDS := $(VIRTUALENV)/.depends
 EGG_INFO := $(subst -,_,$(PROJECT)).egg-info
 
 ifeq ($(OS),Windows_NT)
-VERSION := C:\\Python33\\python.exe
-BIN := $(VIRTUALENV)/Scripts
-EXE := .exe
-OPEN := cmd /c start
+	VERSION := C:\\Python33\\python.exe
+	BIN := $(VIRTUALENV)/Scripts
+	EXE := .exe
+	OPEN := cmd /c start
+	# https://bugs.launchpad.net/virtualenv/+bug/449537
+	export TCL_LIBRARY=C:\\Python33\\tcl\\tcl8.5
 else
-VERSION := python3
-BIN := $(VIRTUALENV)/bin
-OPEN := open
+	VERSION := python3
+	BIN := $(VIRTUALENV)/bin
+	OPEN := open
 endif
 MAN := man
 SHARE := share
@@ -139,3 +141,10 @@ dist: develop depends doc
 upload: develop depends doc
 	$(PYTHON) setup.py register sdist upload
 	$(PYTHON) setup.py bdist_wheel upload
+
+
+# Execution ##################################################################
+
+.PHONY: gui
+gui:
+	$(BIN)/DropTheBeat$(EXE)
