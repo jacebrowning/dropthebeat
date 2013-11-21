@@ -4,7 +4,7 @@
 Setup script for DropTheBeat.
 """
 
-from dtb import __project__, CLI
+from dtb import __project__, CLI, GUI
 
 import setuptools
 
@@ -20,7 +20,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
 
     entry_points={'console_scripts': [CLI + ' = dtb.cli:main',
-                                      'DropTheBeat = dtb.gui:main']},
+                                      GUI + ' = dtb.gui:main']},
 
     long_description=open('README.md').read(),
     license='LGPL',

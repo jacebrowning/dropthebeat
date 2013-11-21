@@ -82,12 +82,12 @@ def main(args=None):
         success = _run(args, os.getcwd(), parser.error)
     except KeyboardInterrupt:
         logging.debug("command cancelled")
-        success = False
-    if success:
-        logging.debug("command succedded")
     else:
-        logging.debug("command failed")
-        sys.exit(1)
+        if success:
+            logging.debug("command succedded")
+        else:
+            logging.debug("command failed")
+            sys.exit(1)
 
 
 def _configure_logging(verbosity=0):
@@ -162,7 +162,7 @@ def _run(args, cwd, err):  # pylint: disable=W0613
     # Run the main GUI or command-line interface
     if args.gui:
         logging.info("launching the GUI...")
-        return gui.main()
+        return gui.run(args)
     else:
         logging.info("starting the main loop...")
         return _loop(this, args.daemon)
@@ -178,6 +178,7 @@ def _new(name, root):
         return False
 
     return True
+
 
 def _loop(this, daemon):
     """Run the main CLI loop."""

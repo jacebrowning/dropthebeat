@@ -116,6 +116,11 @@ class TestUser(unittest.TestCase):  # pylint: disable=R0904
         self.assertEqual(path, self.user.path_downloads)
         self.assertTrue(os.path.isdir(path))
 
+    def test_path_downloads_set(self):
+        """Verify a user's downloads path can be set."""
+        self.user.path_downloads = '_downloads'
+        self.assertEqual('_downloads', self.user.path_downloads)
+
     def test_info(self):
         """Verify a user's info is correct."""
         self.assertEqual(('PC', 'MrTemp'), self.user.info)

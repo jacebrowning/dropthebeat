@@ -10,6 +10,7 @@ __project__ = 'DropTheBeat'
 __version__ = None  # required for initial installation
 
 CLI = 'dtb'
+GUI = __project__
 
 try:
     __version__ = get_distribution(__project__).version  # pylint: disable=E1103

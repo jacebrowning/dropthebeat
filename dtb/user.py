@@ -151,6 +151,18 @@ class User(object):
                 path = data.get('downloads', None)
         return path
 
+    @path_downloads.setter
+    def path_downloads(self, path):
+        """Set the user's download path."""
+        # TODO: refactor all into one common reader and writer
+        with open(self.path_settings, 'r') as settings:
+            text = settings.read()
+        data = yaml.load(text)
+        data['downloads'] = path
+        text = yaml.dump(data)
+        with open(self.path_settings, 'w') as settings:
+            settings.write(text)
+
     @property
     def friends(self):
         """Iterate through the user's friends."""

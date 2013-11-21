@@ -105,7 +105,7 @@ class TestCLI(unittest.TestCase):  # pylint: disable=R0904
         # Create user
         self.dtb('--new', 'JaceBrowning')
         # Run the daemon
-        self.assertRaises(SystemExit, self.dtb, '--daemon')
+        self.assertIs(None, self.dtb('--daemon'))
 
     def test_duplicate_users(self):
         """Verify duplicate users cannot be created."""
@@ -123,7 +123,7 @@ class TestCLI(unittest.TestCase):  # pylint: disable=R0904
         # Delete user
         self.dtb('--delete')
 
-    @patch('dtb.gui.main', Mock(return_value=True))
+    @patch('dtb.gui.run', Mock(return_value=True))
     def test_launch_gui(self):
         """Verify the GUI can be launched."""
         self.log("launching the GUI")
