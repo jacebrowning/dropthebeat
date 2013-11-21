@@ -40,6 +40,16 @@ class TestSong(unittest.TestCase):  # pylint: disable=R0904
         """Verify a song can be converted to string."""
         self.assertEqual(FAKESONG, str(self.song))
 
+    def test_in_string(self):
+        """Verify an incoming song can be presented."""
+        text = "FakeSong.mp3 (from Jace)"
+        self.assertEqual(text, self.song.in_string)
+
+    def test_out_string(self):
+        """Verify an outgoing song can be presented."""
+        text = "FakeSong.mp3 (to Jace)"
+        self.assertEqual(text, self.song.out_string)
+
     def test_link(self):
         """Verify a link to a song can be created."""
         self.song.link(EMPTY)

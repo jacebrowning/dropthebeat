@@ -154,7 +154,7 @@ class TestUser(unittest.TestCase):  # pylint: disable=R0904
         try:
             songs = list(self.user.outgoing)
             self.assertEqual(1, len(songs))
-            self.assertEqual(self.name, songs[0].friendname)
+            self.assertEqual(self.user2.name, songs[0].friendname)
         finally:
             os.remove(path)
 

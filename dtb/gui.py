@@ -5,44 +5,56 @@ Graphical interface for DropTheBeat.
 """
 
 import tkinter as tk
-from tkinter import simpledialog, filedialog
+from tkinter import messagebox, simpledialog, filedialog
 
+import os
 import sys
 import argparse
 from itertools import chain
 import logging
 
 from dtb import GUI, VERSION
-from dtb import share, user, song
+from dtb import share, user
 from dtb import settings
 
 
 class Application(tk.Frame):  # pylint: disable=R0904,R0924
     """Tkinter application for DropTheBeat."""
 
-    def __init__(self, master=None):
+    def __init__(self, master=None, root=None, name=None):
         tk.Frame.__init__(self, master)
 
         # Load the root sharing directory
-        self.root = share.find()
+        self.root = root or share.find()
 
         # Load the user
+        self.user = user.User(os.path.join(self.root, name)) if name else None
         try:
-            self.user = user.get_current(self.root)
+            self.user = self.user or user.get_current(self.root)
         except EnvironmentError:
             msg = "Enter your name in the form 'FirstLast':"
-            name = simpledialog.askstring("Create a User", msg).strip(" '")
+            text = simpledialog.askstring("Create a User", msg)
+            name = text.strip(" '") if text else None
+            if not name:
+                raise KeyboardInterrupt("no user specified")
             self.user = user.User.new(self.root, name)
 
         # Create variables
         self.path_downloads = tk.StringVar(value=self.user.path_downloads)
+        self.outgoing = []
+        self.incoming = []
 
         # Initialize the GUI
+        self.listbox_outgoing = None
+        self.listbox_incoming = None
         self.init(master)
+
+        # Show the GUI
         master.deiconify()
+        self.update()
 
     def init(self, master):  # pylint: disable=R0914
-        """Initialize frames and widgets."""
+        """Initialize frames and widgets."""  # pylint: disable=C0301
 
         # Shared settings
 
@@ -62,22 +74,16 @@ class Application(tk.Frame):  # pylint: disable=R0904,R0924
         # Create widets for frames
 
         label_downloads = tk.Label(frame_settings, text="Downloads:")
-        entry_downloads = tk.Entry(frame_settings, state='readonly',
-                                   textvariable=self.path_downloads)
-        button_downlods = tk.Button(frame_settings, text="...",
-                                    command=self.browse_downloads)
+        entry_downloads = tk.Entry(frame_settings, state='readonly', textvariable=self.path_downloads)
+        button_downlods = tk.Button(frame_settings, text="...", command=self.browse_downloads)
 
-        listbox_incoming = tk.Listbox(frame_incoming)
-        button_remove = tk.Button(frame_incoming, text="Remove Selected",
-                                  command=self.do_remove)
-        button_share = tk.Button(frame_incoming, text="Share Songs...",
-                                 command=self.do_share)
+        self.listbox_outgoing = tk.Listbox(frame_outgoing, selectmode=tk.EXTENDED)
+        button_remove = tk.Button(frame_outgoing, text="Remove Selected", command=self.do_remove)
+        button_share = tk.Button(frame_outgoing, text="Share Songs...", command=self.do_share)
 
-        listbox_outgoing = tk.Listbox(frame_outgoing)
-        button_ignore = tk.Button(frame_outgoing, text="Ignore Selected",
-                                  command=self.do_ignore)
-        button_download = tk.Button(frame_outgoing, text="Download Songs",
-                                    command=self.do_download)
+        self.listbox_incoming = tk.Listbox(frame_incoming, selectmode=tk.EXTENDED)
+        button_ignore = tk.Button(frame_incoming, text="Ignore Selected", command=self.do_ignore)
+        button_download = tk.Button(frame_incoming, text="Download Selected", command=self.do_download)
 
         # Specify frame resizing
 
@@ -102,11 +108,11 @@ class Application(tk.Frame):  # pylint: disable=R0904,R0924
         entry_downloads.grid(row=0, column=1, **stickypad)
         button_downlods.grid(row=0, column=2, **pad)
 
-        listbox_incoming.grid(row=0, column=0, columnspan=2, **stickypad)
+        self.listbox_incoming.grid(row=0, column=0, columnspan=2, **stickypad)
         button_remove.grid(row=1, column=0, sticky=tk.SW, **pad)
         button_share.grid(row=1, column=1, sticky=tk.SE, **pad)
 
-        listbox_outgoing.grid(row=0, column=0, columnspan=2, **stickypad)
+        self.listbox_outgoing.grid(row=0, column=0, columnspan=2, **stickypad)
         button_ignore.grid(row=1, column=0, sticky=tk.SW, **pad)
         button_download.grid(row=1, column=1, sticky=tk.SE, **pad)
 
@@ -121,9 +127,10 @@ class Application(tk.Frame):  # pylint: disable=R0904,R0924
 
         frame_settings.grid(row=0, **stickypad)
         frame_div1.grid(row=1, sticky=tk.EW, padx=10)
-        frame_incoming.grid(row=2, **stickypad)
+        frame_outgoing.grid(row=2, **stickypad)
         frame_div2.grid(row=3, sticky=tk.EW, padx=10)
-        frame_outgoing.grid(row=4, **stickypad)
+        frame_incoming.grid(row=4, **stickypad)
+
 
     def browse_downloads(self):
         """Browser for a new downloads directory."""
@@ -134,23 +141,45 @@ class Application(tk.Frame):  # pylint: disable=R0904,R0924
 
     def do_remove(self):
         """Remove selected songs."""
-        raise NotImplementedError
+        for index in (int(s) for s in self.listbox_outgoing.curselection()):
+            self.outgoing[index].ignore()
+        self.update()
 
     def do_share(self):
         """Share songs."""
-        raise NotImplementedError
+        paths = filedialog.askopenfilenames()
+        for path in paths:
+            self.user.recommend(path)
+        self.update()
 
     def do_ignore(self):
         """Ignore selected songs."""
-        raise NotImplementedError
+        for index in (int(s) for s in self.listbox_incoming.curselection()):
+            self.incoming[index].ignore()
+        self.update()
 
     def do_download(self):
         """Download all songs."""
-        raise NotImplementedError
+        for index in (int(s) for s in self.listbox_incoming.curselection()):
+            self.incoming[index].download()
+        self.update()
 
     def update(self):
         """Update the list of outgoing and incoming songs."""
-        raise NotImplementedError
+        # Cleanup outgoing songs
+        self.user.cleanup()
+        # Update outgoing songs list
+        logging.info("updating outoing songs...")
+        self.outgoing = list(self.user.outgoing)
+        self.listbox_outgoing.delete(0, tk.END)
+        for song in self.outgoing:
+            self.listbox_outgoing.insert(tk.END, song.out_string)
+        # Update incoming songs list
+        logging.info("updating incoming songs...")
+        self.incoming = list(self.user.incoming)
+        self.listbox_incoming.delete(0, tk.END)
+        for song in self.incoming:
+            self.listbox_incoming.insert(tk.END, song.in_string)
 
 
 # TODO: refactor common code
@@ -185,12 +214,16 @@ def main(args=None):
         # Shared options
     debug = argparse.ArgumentParser(add_help=False)
     debug.add_argument('-V', '--version', action='version', version=VERSION)
-    debug.add_argument('-v', '--verbose', action='count', default=1,
+    debug.add_argument('-v', '--verbose', action='count', default=0,
                        help="enable verbose logging")
     shared = {'formatter_class': _HelpFormatter, 'parents': [debug]}
 
     # Main parser
     parser = argparse.ArgumentParser(prog=GUI, description=__doc__, **shared)
+    # Hidden argument to override the root sharing directory path
+    parser.add_argument('--root', metavar="PATH", help=argparse.SUPPRESS)
+    # Hidden argument to run the program as a different user
+    parser.add_argument('--test', metavar='FirstLast', help=argparse.SUPPRESS)
 
     # Parse arguments
     args = parser.parse_args(args=args)
@@ -211,24 +244,17 @@ def main(args=None):
             sys.exit(1)
 
 
-# TODO: refactor common code
 def _configure_logging(verbosity=0):
     """Configure logging using the provided verbosity level (0+)."""
 
     # Configure the logging level and format
     if verbosity == 0:
-        level = settings.DEFAULT_LOGGING_LEVEL
+        level = settings.VERBOSE_LOGGING_LEVEL
         default_format = settings.DEFAULT_LOGGING_FORMAT
         verbose_format = settings.VERBOSE_LOGGING_FORMAT
-    elif verbosity == 1:
-        level = settings.VERBOSE_LOGGING_LEVEL
-        default_format = verbose_format = settings.VERBOSE_LOGGING_FORMAT
-    elif verbosity == 2:
-        level = settings.VERBOSE2_LOGGING_LEVEL
-        default_format = verbose_format = settings.VERBOSE_LOGGING_FORMAT
     else:
         level = settings.VERBOSE2_LOGGING_LEVEL
-        default_format = verbose_format = settings.VERBOSE2_LOGGING_FORMAT
+        default_format = verbose_format = settings.VERBOSE_LOGGING_FORMAT
 
     # Set a custom formatter
     logging.basicConfig(level=level)
@@ -241,8 +267,13 @@ def run(args):
     root = tk.Tk()
     root.title(GUI)
     root.minsize(500, 500)
+    # Map the Mac 'command' key to 'control'
+    root.bind_class('Listbox', '<Command-Button-1>',
+                    root.bind_class('Listbox', '<Control-Button-1>'))
+    # Temporarity hide the window for other dialogs
     root.withdraw()
-    app = Application(master=root)
+    # Start the application
+    app = Application(master=root, root=args.root, name=args.test)
     return app.mainloop()
 
 

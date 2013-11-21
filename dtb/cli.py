@@ -14,12 +14,13 @@ from dtb import CLI, VERSION
 from dtb import share, user, gui, settings
 
 
+# TODO: refactor common code
 class _HelpFormatter(argparse.HelpFormatter):
     """Command-line help text formatter with wider help text."""
     def __init__(self, *args, **kwargs):
         super().__init__(*args, max_help_position=40, **kwargs)
 
-
+# TODO: refactor common code
 class _WarningFormatter(logging.Formatter, object):
     """Logging formatter that always displays a verbose logging
     format for logging level WARNING or higher."""
@@ -54,6 +55,7 @@ def main(args=None):
                         help="launch the GUI")
     parser.add_argument('-d', '--daemon', action='store_true',
                         help="if terminal mode, run forever")
+    # TODO: support sharing multiple songs
     parser.add_argument('-s', '--share', metavar='PATH',
                         help="recommend a song")
     parser.add_argument('-i', '--incoming', action='store_true',
@@ -120,6 +122,12 @@ def _run(args, cwd, err):  # pylint: disable=W0613
     @param cwd: current working directory
     @param err: function to call for CLI errors
     """
+    # Run the GUI
+    if args.gui:
+        logging.info("launching the GUI...")
+        return gui.run(args)
+
+    # Find the sharing directory
     root = args.root or share.find()
 
     # Create a new user and exit
@@ -159,13 +167,9 @@ def _run(args, cwd, err):  # pylint: disable=W0613
 
         return True
 
-    # Run the main GUI or command-line interface
-    if args.gui:
-        logging.info("launching the GUI...")
-        return gui.run(args)
-    else:
-        logging.info("starting the main loop...")
-        return _loop(this, args.daemon)
+    # Run the command-line interface loop
+    logging.info("starting the main loop...")
+    return _loop(this, args.daemon)
 
 
 def _new(name, root):

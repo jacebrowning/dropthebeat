@@ -62,6 +62,18 @@ class Song(object):
                         logging.debug("non-link YAML: {}".format(self.path))
         return src
 
+    @property
+    def in_string(self):
+        """Get the string representation for an incoming song."""
+        filename = os.path.basename(self.source)
+        return "{} (from {})".format(filename, self.friendname)
+
+    @property
+    def out_string(self):
+        """Get the string representation for an incoming song."""
+        filename = os.path.basename(self.source)
+        return "{} (to {})".format(filename, self.friendname)
+
     def download(self):
         """Move the song to the user's downlod directory.
 
@@ -88,6 +100,7 @@ class Song(object):
                     logging.warning("broken link: {}".format(self.path))
                     os.remove(self.path)
         except IOError as error:
+            # TODO: these errors need to be left uncaught for the GUI
             logging.warning(error)
         return dst
 

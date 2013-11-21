@@ -201,6 +201,8 @@ class User(object):
             for song in friend.incoming:
                 if song.friendname == self.name:
                     found = True
+                    # TODO: is this the best way to invert ownership?
+                    song.friendname = friend.name
                     logging.debug("outoing: {}".format(song))
                     yield song
         if not found:
