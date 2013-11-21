@@ -108,15 +108,15 @@ class Application(tk.Frame):  # pylint: disable=R0904,R0924
 
         label_downloads.grid(row=0, column=0, **pad)
         entry_downloads.grid(row=0, column=1, **stickypad)
-        button_downlods.grid(row=0, column=2, **pad)
+        button_downlods.grid(row=0, column=2, ipadx=5, **pad)
 
         self.listbox_incoming.grid(row=0, column=0, columnspan=2, **stickypad)
-        button_remove.grid(row=1, column=0, sticky=tk.SW, **pad)
-        button_share.grid(row=1, column=1, sticky=tk.SE, **pad)
+        button_remove.grid(row=1, column=0, sticky=tk.SW, ipadx=5, **pad)
+        button_share.grid(row=1, column=1, sticky=tk.SE, ipadx=5, **pad)
 
         self.listbox_outgoing.grid(row=0, column=0, columnspan=2, **stickypad)
-        button_ignore.grid(row=1, column=0, sticky=tk.SW, **pad)
-        button_download.grid(row=1, column=1, sticky=tk.SE, **pad)
+        button_ignore.grid(row=1, column=0, sticky=tk.SW, ipadx=5, **pad)
+        button_download.grid(row=1, column=1, sticky=tk.SE, ipadx=5, **pad)
 
         # Specify master resizing
 
