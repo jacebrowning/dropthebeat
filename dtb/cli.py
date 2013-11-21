@@ -10,47 +10,17 @@ import time
 import argparse
 import logging
 
-from dtb import CLI, VERSION
-from dtb import share, user, gui, settings
-
-
-# TODO: refactor common code
-class _HelpFormatter(argparse.HelpFormatter):
-    """Command-line help text formatter with wider help text."""
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, max_help_position=40, **kwargs)
-
-# TODO: refactor common code
-class _WarningFormatter(logging.Formatter, object):
-    """Logging formatter that always displays a verbose logging
-    format for logging level WARNING or higher."""
-
-    def __init__(self, default_format, verbose_format, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.default_format = default_format
-        self.verbose_format = verbose_format
-
-    def format(self, record):
-        """Python 3 hack to change the formatting style dynamically."""
-        if record.levelno > logging.INFO:
-            self._style._fmt = self.verbose_format  # pylint: disable=W0212
-        else:
-            self._style._fmt = self.default_format  # pylint: disable=W0212
-        return super().format(record)
+from dtb import CLI
+from dtb import share, user, gui
+from dtb.common import SHARED, WarningFormatter
+from dtb import settings
 
 
 def main(args=None):
     """Process command-line arguments and run the program.
     """
-    # Shared options
-    debug = argparse.ArgumentParser(add_help=False)
-    debug.add_argument('-V', '--version', action='version', version=VERSION)
-    debug.add_argument('-v', '--verbose', action='count', default=0,
-                       help="enable verbose logging")
-    shared = {'formatter_class': _HelpFormatter, 'parents': [debug]}
-
     # Main parser
-    parser = argparse.ArgumentParser(prog=CLI, description=__doc__, **shared)
+    parser = argparse.ArgumentParser(prog=CLI, description=__doc__, **SHARED)
     parser.add_argument('-g', '--gui', action='store_true',
                         help="launch the GUI")
     parser.add_argument('-d', '--daemon', action='store_true',
@@ -112,7 +82,7 @@ def _configure_logging(verbosity=0):
 
     # Set a custom formatter
     logging.basicConfig(level=level)
-    formatter = _WarningFormatter(default_format, verbose_format)
+    formatter = WarningFormatter(default_format, verbose_format)
     logging.root.handlers[0].setFormatter(formatter)
 
 
