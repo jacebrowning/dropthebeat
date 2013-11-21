@@ -8,15 +8,15 @@ import os
 import getpass
 import logging
 
-SHARE = 'DropTheBeat'
-SERVICES = ('Dropbox',)
-
 ROOTS = (
     r"C:\Users",
-    r"C:\Documents and Settings",
-    r"/home",
     r"/Users",
+    r"/home",
 )
+SERVICES = (
+    'Dropbox',
+)
+SHARE = 'DropTheBeat'
 
 
 def find(top=None):
@@ -24,26 +24,30 @@ def find(top=None):
 
     top = top or _default_top()
 
-    logging.debug("looking for '{}' in {}...".format(SHARE, top))
+    logging.debug("looking for service in {}...".format(top))
     for directory in os.listdir(top):
         if directory in SERVICES:
             service = os.path.join(top, directory)
+            logging.debug("found service: {}".format(service))
+            logging.debug("looking for '{}' in {}...".format(SHARE, service))
             for dirpath, _, _, in os.walk(service):
                 path = os.path.join(dirpath, SHARE)
                 if os.path.isdir(path):
                     logging.info("found share: {}".format(path))
                     return path
 
-    raise EnvironmentError("no '{}' directory found".format(SHARE))
+    raise EnvironmentError("no '{}' folder found".format(SHARE))
 
 
 def _default_top():
     """Return the default search path."""
 
     username = getpass.getuser()
+    logging.debug("looking for home...")
     for root in ROOTS:
         path = os.path.join(root, username)
         if os.path.isdir(path):  # pragma: no cover - manual test
+            logging.debug("found home: {}".format(path))
             return path
 
     raise EnvironmentError("no home found for '{}'".format(username))

@@ -109,6 +109,7 @@ def _run(args, cwd, err):  # pylint: disable=W0613
         this = user.User(os.path.join(root, args.test))
     else:
         this = user.get_current(root)
+    this.cleanup()
 
     # Delete user and exit
     if args.delete:
@@ -130,7 +131,6 @@ def _run(args, cwd, err):  # pylint: disable=W0613
             print("shared: {}".format(path))
 
         if args.outgoing:
-            this.cleanup()
             logging.info("displaying outgoing songs...")
             for song in this.outgoing:
                 print("outgoing: {}".format(song))
