@@ -35,6 +35,7 @@ class Application(tk.Frame):  # pylint: disable=R0904,R0924
         except EnvironmentError:
             msg = "Enter your name in the form 'FirstLast':"
             text = simpledialog.askstring("Create a User", msg)
+            logging.debug("text: {}".format(repr(text)))
             name = text.strip(" '") if text else None
             if not name:
                 raise KeyboardInterrupt("no user specified")
@@ -132,10 +133,10 @@ class Application(tk.Frame):  # pylint: disable=R0904,R0924
         frame_div2.grid(row=3, sticky=tk.EW, padx=10)
         frame_incoming.grid(row=4, **stickypad)
 
-
     def browse_downloads(self):
         """Browser for a new downloads directory."""
         path = filedialog.askdirectory()
+        logging.debug("path: {}".format(path))
         if path:
             self.user.path_downloads = path
             self.path_downloads.set(self.user.path_downloads)
@@ -149,6 +150,9 @@ class Application(tk.Frame):  # pylint: disable=R0904,R0924
     def do_share(self):
         """Share songs."""
         paths = filedialog.askopenfilenames()
+        if isinstance(paths, str):  # http://bugs.python.org/issue5712
+            paths = self.master.tk.splitlist(paths)
+        logging.debug("paths: {}".format(paths))
         for path in paths:
             self.user.recommend(path)
         self.update()
