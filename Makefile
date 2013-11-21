@@ -47,7 +47,7 @@ $(PYTHON):
 .PHONY: depends
 depends: .env $(DEPENDS) $(SOURCES)
 $(DEPENDS):
-	$(PIP) install docutils pdoc pep8 nose coverage --download-cache=$(CACHE)
+	$(PIP) install docutils pdoc pep8 nose coverage wheel --download-cache=$(CACHE)
 	$(MAKE) .pylint
 	touch $(DEPENDS)  # flag to indicate dependencies are installed
 
@@ -131,11 +131,11 @@ clean-all: clean
 # Release ####################################################################
 
 .PHONY: dist
-dist: .clean-dist doc
+dist: develop depends doc
 	$(PYTHON) setup.py sdist
 	$(PYTHON) setup.py bdist_wheel
 
 .PHONY: upload
-upload: .clean-dist doc
+upload: develop depends doc
 	$(PYTHON) setup.py register sdist upload
 	$(PYTHON) setup.py bdist_wheel upload
