@@ -234,8 +234,8 @@ class User(object):
         """
         logging.info("recommending {}...".format(path))
         # TODO: create os-specific symlinks instead of copying the file
-        path = shutil.copy(path, self.path_drops)
-        song = Song(path)
+        shutil.copy(path, self.path_drops)
+        song = Song(os.path.join(self.path_drops, os.path.basename(path)))
         for friend in self.friends:
             if not users or friend.name in users:
                 song.link(os.path.join(friend.path, self.name))
