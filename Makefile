@@ -146,5 +146,5 @@ upload: develop depends doc
 # Execution ##################################################################
 
 .PHONY: gui
-gui:
+gui: develop
 	$(BIN)/DropTheBeat$(EXE)
