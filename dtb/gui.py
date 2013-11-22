@@ -236,17 +236,23 @@ def _configure_logging(verbosity=0):
 
 def run(args):
     """Start the GUI."""
+
     root = tk.Tk()
     root.title(GUI)
     root.minsize(500, 500)
+
     # Map the Mac 'command' key to 'control'
     root.bind_class('Listbox', '<Command-Button-1>',
                     root.bind_class('Listbox', '<Control-Button-1>'))
+
     # Temporarity hide the window for other dialogs
     root.withdraw()
+
     # Start the application
     app = Application(master=root, root=args.root, name=args.test)
-    return app.mainloop()
+    app.mainloop()
+
+    return True
 
 
 if __name__ == '__main__':  # pragma: no cover - manual test

@@ -16,7 +16,7 @@ if not os.path.exists(README):
 
 setuptools.setup(
     name=__project__,
-    version='0.0.1-alpha.2',
+    version='0.0.1-rc.1',
 
     description="Music sharing using Dropbox.",
     url='http://pypi.python.org/pypi/DropTheBeat',
