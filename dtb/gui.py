@@ -86,10 +86,12 @@ class Application(tk.Frame):  # pylint: disable=R0904,R0924
         button_downlods = tk.Button(frame_settings, text="...", command=self.browse_downloads)
 
         self.listbox_outgoing = tk.Listbox(frame_outgoing, selectmode=tk.EXTENDED)
+        button_refout = tk.Button(frame_outgoing, text="\u21BB", command=self.update)
         button_remove = tk.Button(frame_outgoing, text="Remove Selected", command=self.do_remove)
         button_share = tk.Button(frame_outgoing, text="Share Songs...", command=self.do_share)
 
         self.listbox_incoming = tk.Listbox(frame_incoming, selectmode=tk.EXTENDED)
+        button_refin = tk.Button(frame_incoming, text="\u21BB", command=self.update)
         button_ignore = tk.Button(frame_incoming, text="Ignore Selected", command=self.do_ignore)
         button_download = tk.Button(frame_incoming, text="Download Selected", command=self.do_download)
 
@@ -102,13 +104,15 @@ class Application(tk.Frame):  # pylint: disable=R0904,R0924
 
         frame_incoming.rowconfigure(0, weight=1)
         frame_incoming.rowconfigure(1, weight=0)
-        frame_incoming.columnconfigure(0, weight=1)
+        frame_incoming.columnconfigure(0, weight=0)
         frame_incoming.columnconfigure(1, weight=1)
+        frame_incoming.columnconfigure(2, weight=1)
 
         frame_outgoing.rowconfigure(0, weight=1)
         frame_outgoing.rowconfigure(1, weight=0)
-        frame_outgoing.columnconfigure(0, weight=1)
+        frame_outgoing.columnconfigure(0, weight=0)
         frame_outgoing.columnconfigure(1, weight=1)
+        frame_outgoing.columnconfigure(2, weight=1)
 
         # Pack widgets in frames
 
@@ -116,13 +120,15 @@ class Application(tk.Frame):  # pylint: disable=R0904,R0924
         entry_downloads.grid(row=0, column=1, **stickypad)
         button_downlods.grid(row=0, column=2, ipadx=5, **pad)
 
-        self.listbox_incoming.grid(row=0, column=0, columnspan=2, **stickypad)
-        button_remove.grid(row=1, column=0, sticky=tk.SW, ipadx=5, **pad)
-        button_share.grid(row=1, column=1, sticky=tk.SE, ipadx=5, **pad)
+        self.listbox_outgoing.grid(row=0, column=0, columnspan=3, **stickypad)
+        button_refout.grid(row=1, column=0, sticky=tk.SW, ipadx=5, **pad)
+        button_remove.grid(row=1, column=1, sticky=tk.SW, ipadx=5, **pad)
+        button_share.grid(row=1, column=2, sticky=tk.SE, ipadx=5, **pad)
 
-        self.listbox_outgoing.grid(row=0, column=0, columnspan=2, **stickypad)
-        button_ignore.grid(row=1, column=0, sticky=tk.SW, ipadx=5, **pad)
-        button_download.grid(row=1, column=1, sticky=tk.SE, ipadx=5, **pad)
+        self.listbox_incoming.grid(row=0, column=0, columnspan=3, **stickypad)
+        button_refin.grid(row=1, column=0, sticky=tk.SW, ipadx=5, **pad)
+        button_ignore.grid(row=1, column=1, sticky=tk.SW, ipadx=5, **pad)
+        button_download.grid(row=1, column=2, sticky=tk.SE, ipadx=5, **pad)
 
         # Specify master resizing
 
