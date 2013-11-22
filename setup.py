@@ -19,7 +19,7 @@ setuptools.setup(
     version='0.0.1',
 
     description="Music sharing using Dropbox.",
-    url='http://pypi.python.org/pypi/DropTheBeat',
+    url='http://github.com/jacebrowning/dropthebeat',
     author='Jace Browning',
     author_email='jacebrowning@gmail.com',
 
