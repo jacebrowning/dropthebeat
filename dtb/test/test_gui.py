@@ -24,15 +24,9 @@ if __name__ == '__main__':
 class TestGUI(unittest.TestCase):  # pylint: disable=R0904
     """Integration tests for the 'DropTheBeat' graphical interface."""
 
-    @patch('tkinter.Tk', Mock(side_effect=KeyboardInterrupt))
+    @patch('dtb.gui.run', Mock(side_effect=KeyboardInterrupt))
     def test_interrupt(self):
         """Verify the GUI can be interrupted."""
-        self.assertIs(None, gui.main([]))
-
-    @patch('tkinter.Tk', Mock())
-    @patch('dtb.gui.Application', Mock())
-    def test_launch(self):
-        """Verify the GUI can be launched."""
         self.assertIs(None, gui.main([]))
 
     @patch('dtb.gui.run', Mock(return_value=False))

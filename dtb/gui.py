@@ -6,7 +6,7 @@ Graphical interface for DropTheBeat.
 
 import sys
 from unittest.mock import Mock
-try:
+try:  # pragma: no cover - not measurable
     import tkinter as tk
     from tkinter import simpledialog, filedialog
 except ImportError as err:  # pragma: no cover - not measurable
@@ -254,22 +254,24 @@ def run(args):
         logging.error("tkinter is not available")
         return False
 
-    root = tk.Tk()
-    root.title(GUI)
-    root.minsize(500, 500)
+    else:  # pragma: no cover - manual test
 
-    # Map the Mac 'command' key to 'control'
-    root.bind_class('Listbox', '<Command-Button-1>',
-                    root.bind_class('Listbox', '<Control-Button-1>'))
+        root = tk.Tk()
+        root.title(GUI)
+        root.minsize(500, 500)
 
-    # Temporarity hide the window for other dialogs
-    root.withdraw()
+        # Map the Mac 'command' key to 'control'
+        root.bind_class('Listbox', '<Command-Button-1>',
+                        root.bind_class('Listbox', '<Control-Button-1>'))
 
-    # Start the application
-    app = Application(master=root, root=args.root, name=args.test)
-    app.mainloop()
+        # Temporarity hide the window for other dialogs
+        root.withdraw()
 
-    return True
+        # Start the application
+        app = Application(master=root, root=args.root, name=args.test)
+        app.mainloop()
+
+        return True
 
 
 if __name__ == '__main__':  # pragma: no cover - manual test
