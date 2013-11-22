@@ -4,14 +4,20 @@
 Graphical interface for DropTheBeat.
 """
 
-import tkinter as tk
-from tkinter import simpledialog, filedialog
+import sys
+from unittest.mock import Mock
+try:
+    import tkinter as tk
+    from tkinter import simpledialog, filedialog
+except ImportError as err:
+    sys.stderr.write("WARNING: {}\n".format(err))
+    tk = Mock()  # pylint: disable=C0103
 
 import os
-import sys
 import argparse
 from itertools import chain
 import logging
+
 
 from dtb import GUI
 from dtb import share, user
@@ -236,6 +242,11 @@ def _configure_logging(verbosity=0):
 
 def run(args):
     """Start the GUI."""
+
+    # Exit if tkinter is not available
+    if isinstance(tk, Mock):
+        logging.error("tkinter is not available")
+        return False
 
     root = tk.Tk()
     root.title(GUI)

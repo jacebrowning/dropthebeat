@@ -1,6 +1,4 @@
 language: python
 python:
   - "3.3"
-before_install:
-  - sudo apt-get install -qq python3.3-tk
 script: make tests
