@@ -37,7 +37,7 @@ class Song(object):
         path = os.path.join(dirpath, filename)
         logging.info("creating link {}...".format(path))
         with open(path, 'w') as link:
-            data = {'link': relpath}
+            data = {'link': relpath.replace('\\', '/')}  # always unix-style
             link.write(yaml.dump(data, default_flow_style=False))
 
     @property
@@ -88,12 +88,14 @@ class Song(object):
             if src == self.path:
                 logging.info("moving {}...".format(src, self.downloads))
                 # Copy then delete in case the opperation is cancelled
-                dst = shutil.copy(src, self.downloads)
+                shutil.copy(src, self.downloads)
+                dst = os.path.join(self.downloads, os.path.basename(src))
                 os.remove(src)
             else:
                 if os.path.exists(src):
                     logging.info("copying {}...".format(src, self.downloads))
-                    dst = shutil.copy(src, self.downloads)
+                    shutil.copy(src, self.downloads)
+                    dst = os.path.join(self.downloads, os.path.basename(src))
                     os.remove(self.path)
                 else:
                     logging.debug("unknown link target: {}".format(src))
