@@ -18,7 +18,7 @@ Getting Started
 Requirements
 ------------
 
-* Python 3
+* Python 3: http://www.python.org/download/releases/3.3.3/#download
 
 
 Installation
@@ -80,7 +80,9 @@ For Developers
 
 Requirements
 ------------
-* GNU Make (or Cygwin Make): http://www.gnu.org/software/make/
+* Python 3: http://www.python.org/download/releases/3.3.3/#download
+* Cygwin Make (Windows): http://cygwin.com/install.html
+* GNU Make (non-Windows): http://www.gnu.org/software/make/
 * Pandoc: http://johnmacfarlane.net/pandoc/
 * virtualenv: https://pypi.python.org/pypi/virtualenv
 
