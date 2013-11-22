@@ -89,14 +89,22 @@ Requirements
 Environment
 -----------
 
-    make develop  # creates the virtualenv
+Create a virtualenv:
+
+    make develop
     
-    make doc  # runs documentation generation 
-    make pep8  # runs pep8 analysis
-    make pylint  # runs pylint
-    make check  # runs all of the above
+Run static analysis:
+
+    make doc
+    make pep8
+    make pylint
+    make check  # all of the above
     
-    make test  # runs the unit tests
-    make tests  # runs the integration tests
+Run the tests:
     
-    make gui  # launch the GUI from the virtualenv
+    make test
+    make tests  # includes integration tests
+    
+Launch the GUI from the virtualenv:
+    
+    make gui  # sets TCL_LIBRARY on Windows
