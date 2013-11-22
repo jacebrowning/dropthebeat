@@ -9,7 +9,7 @@ from unittest.mock import Mock
 try:
     import tkinter as tk
     from tkinter import simpledialog, filedialog
-except ImportError as err:
+except ImportError as err:  # pragma: no cover - not measurable
     sys.stderr.write("WARNING: {}\n".format(err))
     tk = Mock()  # pylint: disable=C0103
 
@@ -25,7 +25,7 @@ from dtb.common import SHARED, WarningFormatter
 from dtb import settings
 
 
-class Application(tk.Frame):  # pylint: disable=R0904,R0924
+class Application(tk.Frame):  # pragma: no cover - manual test, pylint: disable=R0904,R0924
     """Tkinter application for DropTheBeat."""
 
     def __init__(self, master=None, root=None, name=None):
