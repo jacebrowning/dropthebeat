@@ -47,15 +47,15 @@ class TestCLI(unittest.TestCase):  # pylint: disable=R0904
         logging.info(text)
 
     def set_downloads(self, name):
-        """Change the downloads directory."""
-        path = os.path.join(self.root, name, '.dtb', 'settings.yml')
-        with open(path, 'r') as yml:
-            text = yml.read()
-            data = yaml.load(text)
-            data['downloads'] = self.downloads
-        with open(path, 'w') as yml:
-            text = yaml.dump(data)
-            yml.write(text)
+        """Change the downloads directory for the user."""
+        path = os.path.join(self.root, name, '.dtb', 'info.yml')
+        with open(path, 'r') as infile:
+            text = infile.read()
+        data = yaml.load(text)
+        data[0]['downloads'] = self.downloads
+        text = yaml.dump(data)
+        with open(path, 'w') as outfile:
+            outfile.write(text)
 
     def dtb(self, *args):
         """Run the CLI with string arguments."""

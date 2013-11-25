@@ -55,6 +55,19 @@ class TestUser(unittest.TestCase):  # pylint: disable=R0904
         """Verify a user cannot be created twice."""
         self.assertRaises(EnvironmentError, User.new, self.root, self.name)
 
+    def test_add_old_format(self):
+        """Verify a user can be added to an old format."""
+        root = tempfile.mkdtemp()
+        try:
+            with patch('dtb.user.get_info', Mock(return_value=self.INFOS[0])):
+                user = User.new(root, 'TempUser')
+            open(user.path_info, 'w').close()  # blank the file
+            with patch('dtb.user.get_info', Mock(return_value=self.INFOS[1])):
+                user2 = User.add(root, 'TempUser')
+            self.assertEqual(1, len(user2.info))
+        finally:
+            shutil.rmtree(root)
+
     def test_str(self):
         """Verify a user can be converted to a string."""
         text = str(os.path.join(self.root, self.name))
@@ -110,14 +123,27 @@ class TestUser(unittest.TestCase):  # pylint: disable=R0904
         self.assertEqual(path, self.user.path_settings)
         self.assertTrue(os.path.isfile(path))
 
+    @patch('dtb.user.get_info', Mock(return_value=INFOS[0]))
     def test_path_downloads(self):
         """Verify a user's downloads path is correct."""
         path = self.downloads
         self.assertEqual(path, self.user.path_downloads)
         self.assertTrue(os.path.isdir(path))
 
+    @patch('dtb.user.get_info', Mock(return_value=INFOS[0]))
     def test_path_downloads_set(self):
         """Verify a user's downloads path can be set."""
+        temp = tempfile.mkdtemp()
+        try:
+            self.user.path_downloads = temp
+            self.assertEqual(temp, self.user.path_downloads)
+        finally:
+            shutil.rmtree(temp)
+
+    @patch('dtb.user.get_info', Mock(return_value=INFOS[0]))
+    def test_path_downloads_set_old_format(self):
+        """Verify a user's downloads path can be set (from an old format)."""
+        open(self.user.path_info, 'w').close()  # blank the file
         temp = tempfile.mkdtemp()
         try:
             self.user.path_downloads = temp

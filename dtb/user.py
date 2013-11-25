@@ -19,8 +19,8 @@ class User(object):
     """Represents a user directory."""
 
     PRIVATE = '.dtb'
-    INFO = os.path.join(PRIVATE, 'info.yml')
-    SETTINGS = os.path.join(PRIVATE, 'settings.yml')
+    INFO = os.path.join(PRIVATE, 'info.yml')  # list of computer settings
+    SETTINGS = os.path.join(PRIVATE, 'settings.yml')  # general preferences
     REQUESTS = os.path.join(PRIVATE, 'requests.yml')
     LIBRARY = os.path.join(PRIVATE, 'library.sqlite3')
     DROPS = os.path.join(PRIVATE, 'drops')
@@ -59,21 +59,25 @@ class User(object):
         os.makedirs(user.path_private)
         os.makedirs(user.path_drops)
         # Create info
+        info = get_info()
+        data = [{'computer': info[0],
+                 'username': info[1],
+                 'downloads': downloads}]
+        text = yaml.dump(data, default_flow_style=False)
+        logging.debug("saving {}...".format(user.path_info))
         with open(user.path_info, 'w') as outfile:
-            info = get_info()
-            data = {'computer': info[0],
-                    'username': info[1]}
-            text = yaml.dump(data, default_flow_style=False)
             outfile.write(text)
         # Create settings
+        data = {}
+        text = yaml.dump(data, default_flow_style=False)
+        logging.debug("saving {}...".format(user.path_settings))
         with open(user.path_settings, 'w') as outfile:
-            data = {'downloads': downloads}
-            text = yaml.dump(data, default_flow_style=False)
             outfile.write(text)
         # Create requests
+        data = []
+        text = yaml.dump(data, default_flow_style=False)
+        logging.debug("saving {}...".format(user.path_requests))
         with open(user.path_requests, 'w') as outfile:
-            data = []
-            text = yaml.dump(data, default_flow_style=False)
             outfile.write(text)
         # Create folders for friends
         for name in os.listdir(root):
@@ -87,28 +91,35 @@ class User(object):
         return user
 
     @staticmethod
-    def add(root, name):
+    def add(root, name, downloads=None):
         """Add the current computer's information to an existing user.
         @param root: path to root of sharing directory
         @param name: name of existing user's sharing folder
+        @param downloads: path to user's downloads directory
 
         @return: existing User
         """
         logging.debug("adding to user '{}'...".format(name))
+        downloads = downloads or os.path.expanduser('~/Downloads')
+        # Get the existing user
         user = User(os.path.join(root, name))
+        # Update info
+        logging.debug("loading {}...".format(user.path_info))
         with open(user.path_info, 'r') as infile:
             text = infile.read()
-            data = yaml.load(text)
+        data = yaml.load(text)
+        info = get_info()
+        if not isinstance(data, list):
+            logging.warning("data reset due to config format change")
+            data = []
+        data.append({'computer': info[0],
+                     'username': info[1],
+                     'downloads': downloads})
+        text = yaml.dump(data, default_flow_style=False)
+        logging.debug("saving {}...".format(user.path_info))
         with open(user.path_info, 'w') as outfile:
-            info = get_info()
-            if data and not isinstance(data, list):
-                data = [data]
-            else:
-                data = []
-            data.append({'computer': info[0],
-                         'username': info[1]})
-            text = yaml.dump(data, default_flow_style=False)
             outfile.write(text)
+        # Return the updated user
         return user
 
     ### properties based on path #############################################
@@ -157,52 +168,64 @@ class User(object):
 
     @property
     def info(self):
-        """Get the user's information."""
+        """Get a list of the user's information."""
         infos = []
-        with open(self.path_info, 'r') as config:
-            data = yaml.load(config.read())
-            if isinstance(data, list):
-                for info in data:
-                    computer = info.get('computer', None)
-                    username = info.get('username', None)
-                    infos.append((computer, username))
-            elif data:
-                computer = data.get('computer', None)
-                username = data.get('username', None)
+        logging.debug("loading {}...".format(self.path_info))
+        with open(self.path_info, 'r') as infile:
+            text = infile.read()
+        data = yaml.load(text)
+        if isinstance(data, list):
+            for info in data:
+                computer = info.get('computer', None)
+                username = info.get('username', None)
                 infos.append((computer, username))
         return infos
 
     @property
     def path_downloads(self):
         """Get the user's download path."""
-        path = None
-        with open(self.path_settings, 'r') as settings:
-            data = yaml.load(settings.read())
-            downloads = data.get('downloads', [])
-            if not isinstance(downloads, list):
-                path = downloads
+        downloads = None
+        info = get_info()
+        logging.debug("loading {}...".format(self.path_info))
+        with open(self.path_info, 'r') as infile:
+            text = infile.read()
+        data = yaml.load(text)
+        if isinstance(data, list):
+            for info2 in data:
+                if (info[0] == info2.get('computer', None) and
+                    info[1] == info2.get('username', None)):
+                    downloads = info2.get('downloads', None)
+                    break
             else:
-                for path2 in downloads:
-                    if os.path.isdir(path2):
-                        path = path2
-                        break
-        return path
+                logging.warning("no downloads path for: {}".format(info))
+        return downloads
 
     @path_downloads.setter
-    def path_downloads(self, path):
+    def path_downloads(self, downloads):
         """Set the user's download path."""
         # TODO: refactor all into one common reader and writer
-        with open(self.path_settings, 'r') as settings:
-            text = settings.read()
+        info = get_info()
+        logging.debug("loading {}...".format(self.path_info))
+        with open(self.path_info, 'r') as infile:
+            text = infile.read()
         data = yaml.load(text)
-        downloads = data.get('downloads', [])
-        if not isinstance(downloads, list):
-            downloads = [downloads]
-        downloads.insert(0, path)
-        data['downloads'] = downloads
+        if not isinstance(data, list):
+            logging.warning("data reset due to config format change")
+            data = []
+        for index, info2 in enumerate(data):
+            if (info[0] == info2.get('computer', None) and
+                info[1] == info2.get('username', None)):
+                info2['downloads'] = downloads
+                data[index] = info2
+                break
+        else:
+            data.append({'computer': info[0],
+                         'username': info[1],
+                         'downloads': downloads})
         text = yaml.dump(data, default_flow_style=False)
-        with open(self.path_settings, 'w') as settings:
-            settings.write(text)
+        logging.debug("saving {}...".format(self.path_info))
+        with open(self.path_info, 'w') as outfile:
+            outfile.write(text)
 
     @property
     def friends(self):
