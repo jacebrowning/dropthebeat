@@ -81,10 +81,13 @@ For Developers
 Requirements
 ------------
 * Python 3: http://www.python.org/download/releases/3.3.3/#download
-* Cygwin Make (Windows): http://cygwin.com/install.html
-* GNU Make (non-Windows): http://www.gnu.org/software/make/
-* Pandoc: http://johnmacfarlane.net/pandoc/
+* GNU Make:
+	* Windows: http://cygwin.com/install.html
+	* Mac: https://developer.apple.com/xcode
+	* Linux: http://www.gnu.org/software/make
 * virtualenv: https://pypi.python.org/pypi/virtualenv
+* Pandoc: http://johnmacfarlane.net/pandoc/
+
 
 Environment
 -----------
@@ -92,19 +95,19 @@ Environment
 Create a virtualenv:
 
     make develop
-    
+
 Run static analysis:
 
     make doc
     make pep8
     make pylint
     make check  # all of the above
-    
+
 Run the tests:
-    
+
     make test
     make tests  # includes integration tests
-    
+
 Launch the GUI from the virtualenv:
-    
+
     make gui  # sets TCL_LIBRARY on Windows
