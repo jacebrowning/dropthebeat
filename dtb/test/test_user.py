@@ -118,12 +118,16 @@ class TestUser(unittest.TestCase):  # pylint: disable=R0904
 
     def test_path_downloads_set(self):
         """Verify a user's downloads path can be set."""
-        self.user.path_downloads = '_downloads'
-        self.assertEqual('_downloads', self.user.path_downloads)
+        temp = tempfile.mkdtemp()
+        try:
+            self.user.path_downloads = temp
+            self.assertEqual(temp, self.user.path_downloads)
+        finally:
+            shutil.rmtree(temp)
 
     def test_info(self):
         """Verify a user's info is correct."""
-        self.assertEqual(('PC', 'MrTemp'), self.user.info)
+        self.assertEqual([('PC', 'MrTemp')], self.user.info)
 
     def test_friends(self):
         """Verify a user's friends are correct."""
@@ -229,6 +233,22 @@ class TestUser(unittest.TestCase):  # pylint: disable=R0904
     def test_get_current_error(self):
         """Verify an error occurs when the user cannot be found."""
         self.assertRaises(EnvironmentError, get_current, self.root)
+
+    # https://github.com/jacebrowning/dropthebeat/issues/3
+    def test_multiple_computers(self):
+        """Verify a user can use multiple computers."""
+        infos = [('pc1', 'name'), ('pc2', 'name'), ('pc2', 'name')]
+        root = tempfile.mkdtemp()
+        downloads = tempfile.mkdtemp()
+        try:
+            with patch('dtb.user.get_info', Mock(side_effect=infos)):
+                user = User.new(root, 'name', downloads=downloads)
+                user2 = User.add(root, 'name')
+                user3 = User.add(root, 'name')
+                self.assertEqual(user, user2)
+                self.assertEqual(user, user3)
+        finally:
+            shutil.rmtree(root)
 
 
 if __name__ == '__main__':

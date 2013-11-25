@@ -8,7 +8,7 @@ import sys
 from unittest.mock import Mock
 try:  # pragma: no cover - not measurable
     import tkinter as tk
-    from tkinter import simpledialog, filedialog
+    from tkinter import messagebox, simpledialog, filedialog
 except ImportError as err:  # pragma: no cover - not measurable
     sys.stderr.write("WARNING: {}\n".format(err))
     tk = Mock()  # pylint: disable=C0103
@@ -39,13 +39,27 @@ class Application(tk.Frame):  # pragma: no cover - manual test, pylint: disable=
         try:
             self.user = self.user or user.get_current(self.root)
         except EnvironmentError:
-            msg = "Enter your name in the form 'FirstLast':"
-            text = simpledialog.askstring("Create a User", msg)
-            logging.debug("text: {}".format(repr(text)))
-            name = text.strip(" '") if text else None
-            if not name:
-                raise KeyboardInterrupt("no user specified")
-            self.user = user.User.new(self.root, name)
+
+            while True:
+
+                msg = "Enter your name in the form 'FirstLast':"
+                text = simpledialog.askstring("Create a User", msg)
+                logging.debug("text: {}".format(repr(text)))
+                name = text.strip(" '") if text else None
+                if not name:
+                    raise KeyboardInterrupt("no user specified")
+                try:
+                    self.user = user.User.new(self.root, name)
+                except EnvironmentError:
+                    existing = user.User(os.path.join(self.root, name))
+                    msg = "Is this you:\n\n"
+                    for info in existing.info:
+                        msg += "'{}' on '{}'".format(info[1], info[0])
+                    if messagebox.askyesno("Add to Exiting User", msg):
+                        self.user = user.User.add(self.root, name)
+                        break
+                else:
+                    break
 
         # Create variables
         self.path_downloads = tk.StringVar(value=self.user.path_downloads)

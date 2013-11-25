@@ -42,7 +42,7 @@ class User(object):
     @staticmethod
     def new(root, name, downloads=None):
         """Create a new user in the share location.
-        @param share: path to root of sharing directory
+        @param root: path to root of sharing directory
         @param name: name of user's sharing folder
         @param downloads: path to user's downloads directory
 
@@ -84,6 +84,31 @@ class User(object):
         # Return the new user
         logging.info("created user: {}".format(user))
         user.check()
+        return user
+
+    @staticmethod
+    def add(root, name):
+        """Add the current computer's information to an existing user.
+        @param root: path to root of sharing directory
+        @param name: name of existing user's sharing folder
+
+        @return: existing User
+        """
+        logging.debug("adding to user '{}'...".format(name))
+        user = User(os.path.join(root, name))
+        with open(user.path_info, 'r') as infile:
+            text = infile.read()
+            data = yaml.load(text)
+        with open(user.path_info, 'w') as outfile:
+            info = get_info()
+            if data and not isinstance(data, list):
+                data = [data]
+            else:
+                data = []
+            data.append({'computer': info[0],
+                         'username': info[1]})
+            text = yaml.dump(data, default_flow_style=False)
+            outfile.write(text)
         return user
 
     ### properties based on path #############################################
@@ -133,13 +158,19 @@ class User(object):
     @property
     def info(self):
         """Get the user's information."""
-        computer = username = None
+        infos = []
         with open(self.path_info, 'r') as config:
             data = yaml.load(config.read())
-            if data:
+            if isinstance(data, list):
+                for info in data:
+                    computer = info.get('computer', None)
+                    username = info.get('username', None)
+                    infos.append((computer, username))
+            elif data:
                 computer = data.get('computer', None)
                 username = data.get('username', None)
-        return computer, username
+                infos.append((computer, username))
+        return infos
 
     @property
     def path_downloads(self):
@@ -147,8 +178,14 @@ class User(object):
         path = None
         with open(self.path_settings, 'r') as settings:
             data = yaml.load(settings.read())
-            if data:
-                path = data.get('downloads', None)
+            downloads = data.get('downloads', [])
+            if not isinstance(downloads, list):
+                path = downloads
+            else:
+                for path2 in downloads:
+                    if os.path.isdir(path2):
+                        path = path2
+                        break
         return path
 
     @path_downloads.setter
@@ -158,8 +195,12 @@ class User(object):
         with open(self.path_settings, 'r') as settings:
             text = settings.read()
         data = yaml.load(text)
-        data['downloads'] = path
-        text = yaml.dump(data)
+        downloads = data.get('downloads', [])
+        if not isinstance(downloads, list):
+            downloads = [downloads]
+        downloads.insert(0, path)
+        data['downloads'] = downloads
+        text = yaml.dump(data, default_flow_style=False)
         with open(self.path_settings, 'w') as settings:
             settings.write(text)
 
@@ -233,7 +274,6 @@ class User(object):
         @return: shared Song
         """
         logging.info("recommending {}...".format(path))
-        # TODO: create os-specific symlinks instead of copying the file
         shutil.copy(path, self.path_drops)
         song = Song(os.path.join(self.path_drops, os.path.basename(path)))
         for friend in self.friends:
@@ -289,7 +329,7 @@ def get_current(root):
         except ValueError as err:
             logging.debug("invalid user: {}".format(err))
         else:
-            if user.info == info:
+            if info in user.info:
                 logging.info("found user: {}".format(user))
                 return user
 
