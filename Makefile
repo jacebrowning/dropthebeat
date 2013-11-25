@@ -49,7 +49,8 @@ $(PYTHON):
 .PHONY: depends
 depends: .env $(DEPENDS) $(SOURCES)
 $(DEPENDS):
-	$(PIP) install docutils pdoc pep8 nose coverage wheel --download-cache=$(CACHE)
+	$(PIP) install docutils pdoc pep8 nose coverage wheel \
+	       --use-mirrors --download-cache=$(CACHE)
 	$(MAKE) .pylint
 	touch $(DEPENDS)  # flag to indicate dependencies are installed
 
@@ -63,7 +64,7 @@ ifeq ($(shell uname),$(filter $(shell uname),Windows CYGWIN_NT-6.1 CYGWIN_NT-6.1
 	$(PIP) install https://bitbucket.org/logilab/pylint/get/8200a32b14597c24f0f4706417bf30aec1e25386.zip --download-cache=$(CACHE)
 else
 .pylint: .env
-	$(PIP) install pylint --download-cache=$(CACHE)
+	$(PIP) install pylint --use-mirrors --download-cache=$(CACHE)
 endif
 
 # Documentation ##############################################################
