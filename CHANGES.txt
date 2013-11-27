@@ -1,3 +1,5 @@
+v0.0.3 - 2013/11/26:    Bug fixes. Better handling of empty directories.
+
 v0.0.2 - 2013/11/25:    Now supporting multiple users and download paths.
 
 v0.0.1 - 2013/11/22:    Initial release.

@@ -320,7 +320,6 @@ class User(object):
         else:
             os.remove(path)
 
-
     def recommend(self, path, users=None):
         """Recommend a song to a list of users.
 

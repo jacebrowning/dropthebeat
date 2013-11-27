@@ -17,8 +17,6 @@ from dtb.test import EMPTY
 from dtb.test import FAKESONG, FAKELINK, FAKEFILE, BADFAKEFILE, BROKENLINK
 
 
-
-
 class TestSong(unittest.TestCase):  # pylint: disable=R0904
     """Unit tests for the Song class."""  # pylint: disable=C0103,W0212
 
