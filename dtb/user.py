@@ -230,14 +230,24 @@ class User(object):
     @property
     def friends(self):
         """Iterate through the user's friends."""
+        for friend in self._iter_friends():
+            yield friend
+
+    def _iter_friends(self, clean=False):
+        """Iterate through the user's friends with optional cleanup."""
         for directory in os.listdir(self.root):
+            path = os.path.join(self.root, directory)
             try:
-                user = User(os.path.join(self.root, directory))
+                user = User(path)
             except ValueError as err:
                 logging.debug("invalid user: {}".format(err))
+                if clean and os.path.isdir(path):
+                    logging.warning("deleting invalid user: {}".format(path))
+                    self._delete(path)
             else:
                 if user.name != self.name:
                     yield user
+
 
     @property
     def incoming(self):
@@ -245,8 +255,8 @@ class User(object):
         found = False
         logging.debug("looking for incoming songs ({})...".format(self.name))
         for friendname in os.listdir(self.path):
-            if friendname != User.PRIVATE:
-                friendpath = os.path.join(self.path, friendname)
+            friendpath = os.path.join(self.path, friendname)
+            if friendname != User.PRIVATE and os.path.isdir(friendpath):
                 for filename in os.listdir(friendpath):
                     filepath = os.path.join(friendpath, filename)
                     song = Song(filepath, self.path_downloads, friendname)
@@ -275,10 +285,11 @@ class User(object):
     ### methods ##############################################################
 
     def cleanup(self):
-        """Delete all unlinked outgoing songs."""
-        logging.info("cleaning up unlinked songs...")
-        paths = [os.path.join(self.path_drops, filename)
-                 for filename in os.listdir(self.path_drops)]
+        """Delete invalid users, unlinked songs, and empty directories."""
+        logging.info("cleaning up {}...".format(self.root))
+        # Delete unliked songs
+        paths = [os.path.join(self.path_drops, name)
+                 for name in os.listdir(self.path_drops)]
         for song in self.outgoing:
             try:
                 paths.remove(song.source)
@@ -286,7 +297,24 @@ class User(object):
                 pass
         for path in paths:
             logging.info("deleting unlinked: {}".format(path))
+            self._delete(path)
+        # Delete non-friend directories
+        names = [friend.name for friend in self._iter_friends(clean=True)]
+        for name in os.listdir(self.path):
+            path = os.path.join(self.path, name)
+            if name not in names and name != User.PRIVATE:
+                logging.warning("deleting non-friend: {}".format(path))
+                self._delete(path)
+
+    @staticmethod
+    def _delete(path):
+        """Delete a file or directory."""
+        logging.debug("deleting {}...".format(path))
+        if os.path.isdir(path):
+            shutil.rmtree(path)
+        else:
             os.remove(path)
+
 
     def recommend(self, path, users=None):
         """Recommend a song to a list of users.

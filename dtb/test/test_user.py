@@ -193,7 +193,7 @@ class TestUser(unittest.TestCase):  # pylint: disable=R0904
         songs = list(self.user.outgoing)
         self.assertEqual(0, len(songs))
 
-    def test_cleanup(self):
+    def test_cleanup_unlinked(self):
         """Verify a user's directory can be cleaned."""
         path = os.path.join(self.user.path_drops, '_a_song')
         path2 = os.path.join(self.user2.path, self.name, '_a_song2')
@@ -205,6 +205,19 @@ class TestUser(unittest.TestCase):  # pylint: disable=R0904
             self.assertEqual(0, len(os.listdir(self.user.path_drops)))
         finally:
             os.remove(path2)
+
+    # https://github.com/jacebrowning/dropthebeat/issues/5
+    def test_cleanup_empty_dirs(self):
+        """Verify empty directories are deleted during cleanup."""
+        empty = os.path.join(self.user.path, 'empty')
+        os.mkdir(empty)
+        empty2 = os.path.join(self.root, 'empty')
+        os.mkdir(empty2)
+        self.assertTrue(os.path.exists(empty))
+        self.assertTrue(os.path.exists(empty2))
+        self.user.cleanup()
+        self.assertFalse(os.path.exists(empty))
+        self.assertFalse(os.path.exists(empty2))
 
     @patch('dtb.user.Song', MockSong)
     def test_recommend(self,):
@@ -253,6 +266,7 @@ class TestUser(unittest.TestCase):  # pylint: disable=R0904
     @patch('dtb.user.get_info', Mock(return_value=INFOS[0]))
     def test_get_current(self):
         """Verify the current user can be retrieved."""
+        os.mkdir(os.path.join(self.root, 'empty'))
         user = get_current(self.root)
         self.assertEqual(self.user, user)
 
