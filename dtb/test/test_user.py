@@ -55,6 +55,17 @@ class TestUser(unittest.TestCase):  # pylint: disable=R0904
         """Verify a user cannot be created twice."""
         self.assertRaises(EnvironmentError, User.new, self.root, self.name)
 
+    # https://github.com/jacebrowning/dropthebeat/issues/1
+    def test_new_folder_exists(self):
+        """Verify a user can be created when their friend directory exists."""
+        name = 'FolderExists'
+        os.mkdir(os.path.join(self.user.path, name))
+        user = User.new(self.root, name)
+        try:
+            pass
+        finally:
+            user.delete()
+
     def test_add_old_format(self):
         """Verify a user can be added to an old format."""
         root = tempfile.mkdtemp()

@@ -83,8 +83,8 @@ class User(object):
         for name in os.listdir(root):
             friendpath = os.path.join(root, name)
             if name != user.name and os.path.isdir(friendpath):
-                os.mkdir(os.path.join(user.path, name))
-                os.mkdir(os.path.join(friendpath, user.name))
+                User._makedir(os.path.join(user.path, name))
+                User._makedir(os.path.join(friendpath, user.name))
         # Return the new user
         logging.info("created user: {}".format(user))
         user.check()
@@ -248,7 +248,6 @@ class User(object):
                 if user.name != self.name:
                     yield user
 
-
     @property
     def incoming(self):
         """Iterate through the list of incoming songs."""
@@ -305,6 +304,12 @@ class User(object):
             if name not in names and name != User.PRIVATE:
                 logging.warning("deleting non-friend: {}".format(path))
                 self._delete(path)
+
+    @staticmethod
+    def _makedir(path):
+        """Create a directory if needed."""
+        if not os.path.exists(path):
+            os.makedirs(path)
 
     @staticmethod
     def _delete(path):
