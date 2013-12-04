@@ -63,13 +63,22 @@ class TestCLI(unittest.TestCase):  # pylint: disable=R0904
         logging.info("$ {}".format(' '.join(args)))
         main(args)
 
-    def ls(self, path, filename):  # pylint:disable=C0103
+    def ls(self, path, filename, expected=True):  # pylint:disable=C0103
         """Display files in a directory and assert a filename exists."""
         logging.info("$ ls {}".format(path))
         filenames = os.listdir(path)
         for fname in filenames:
             logging.info(fname)
-        self.assertIn(filename, filenames)
+        if expected:
+            self.assertIn(filename, filenames)
+        else:
+            self.assertNotIn(filename, filenames)
+
+    def cat(self, path, expected):
+        """Assert the contents of a file."""
+        with open(path, 'r') as infile:
+            actual = infile.read()
+        self.assertEqual(expected, actual)
 
     def test_recommend_download(self):
         """Verify a song can be shared and downloaded."""
@@ -97,6 +106,27 @@ class TestCLI(unittest.TestCase):  # pylint: disable=R0904
         self.ls(self.downloads, 'FakeSong.mp3')
         # Show that no more songs are shared
         self.dtb('--outgoing', '--test', 'JaceBrowning')
+        # Check the log
+        self.ls(self.downloads, 'dtb.log')
+        self.cat(os.path.join(self.downloads, 'dtb.log'),
+                 "FakeSong.mp3 from JaceBrowning\n"
+                 "FakeSong.mp3 from JaceBrowning\n")
+
+    def test_recommend_download_no_log(self):
+        """Verify a song can be shared and downloaded."""
+        self.log("downloading a shared song without a log")
+        # Create users
+        self.dtb('--new', 'JaneDoe')
+        self.dtb('--new', 'JohnDoe')
+        # Modify their download directory
+        self.set_downloads('JaneDoe')
+        self.set_downloads('JohnDoe')
+        # Share a song
+        self.dtb('--share', FAKESONG, '--test', 'JaneDoe')
+        # Download the shared song
+        self.dtb('--no-log', '--test', 'JohnDoe')
+        # Check for no long
+        self.ls(self.downloads, 'dtb.log', expected=False)
 
     @patch('time.sleep', Mock(side_effect=KeyboardInterrupt))
     def test_interrupt_daemon(self):

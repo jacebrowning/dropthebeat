@@ -25,6 +25,8 @@ def main(args=None):
                         help="launch the GUI")
     parser.add_argument('-d', '--daemon', action='store_true',
                         help="if terminal mode, run forever")
+    parser.add_argument('-q', '--no-log', action='store_true',
+                        help="do not create a log for downloads")
     # TODO: support sharing multiple songs
     parser.add_argument('-s', '--share', metavar='PATH',
                         help="recommend a song")
@@ -139,7 +141,7 @@ def _run(args, cwd, err):  # pylint: disable=W0613
 
     # Run the command-line interface loop
     logging.info("starting the main loop...")
-    return _loop(this, args.daemon)
+    return _loop(this, args.daemon, not args.no_log)
 
 
 def _new(name, root):
@@ -154,13 +156,20 @@ def _new(name, root):
     return True
 
 
-def _loop(this, daemon):
+def _loop(this, daemon, log):
     """Run the main CLI loop."""
     while True:
         for song in this.incoming:
             path = song.download()
             if path:
                 print("downloaded: {}".format(path))
+                # Append download message to the log
+                if log:
+                    dirpath, filename = os.path.split(path)
+                    logpath = os.path.join(dirpath, CLI + '.log')
+                    with open(logpath, 'a') as log:
+                        msg = "{} from {}".format(filename, song.friendname)
+                        log.write(msg + '\n')
         if daemon:
             logging.debug("daemon sleeping for 5 seconds...")
             time.sleep(5)
