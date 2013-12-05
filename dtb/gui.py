@@ -19,7 +19,7 @@ from itertools import chain
 import logging
 
 
-from dtb import GUI
+from dtb import GUI, __version__
 from dtb import share, user
 from dtb.common import SHARED, WarningFormatter
 from dtb import settings
@@ -271,7 +271,7 @@ def run(args):
     else:  # pragma: no cover - manual test
 
         root = tk.Tk()
-        root.title(GUI)
+        root.title("{} ({})".format(GUI, __version__))
         root.minsize(500, 500)
 
         # Map the Mac 'command' key to 'control'
