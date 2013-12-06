@@ -52,9 +52,9 @@ class Application(tk.Frame):  # pragma: no cover - manual test, pylint: disable=
                     self.user = user.User.new(self.root, name)
                 except EnvironmentError:
                     existing = user.User(os.path.join(self.root, name))
-                    msg = "Is this you:\n\n"
+                    msg = "Is this you:"
                     for info in existing.info:
-                        msg += "'{}' on '{}'".format(info[1], info[0])
+                        msg += "\n\n'{}' on '{}'".format(info[1], info[0])
                     if messagebox.askyesno("Add to Exiting User", msg):
                         self.user = user.User.add(self.root, name)
                         break
