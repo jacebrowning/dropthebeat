@@ -55,7 +55,8 @@ class Application(tk.Frame):  # pragma: no cover - manual test, pylint: disable=
                     msg = "Is this you:"
                     for info in existing.info:
                         msg += "\n\n'{}' on '{}'".format(info[1], info[0])
-                    if messagebox.askyesno("Add to Exiting User", msg):
+                    if not existing.info or \
+                            messagebox.askyesno("Add to Existing User", msg):
                         self.user = user.User.add(self.root, name)
                         break
                 else:
