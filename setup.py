@@ -16,7 +16,7 @@ if not os.path.exists(README):
 
 setuptools.setup(
     name=__project__,
-    version='0.0.3',
+    version='0.0.4',
 
     description="Music sharing using Dropbox.",
     url='http://github.com/jacebrowning/dropthebeat',
