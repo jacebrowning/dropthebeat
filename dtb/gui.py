@@ -13,6 +13,7 @@ try:  # pragma: no cover - not measurable
 except ImportError as err:  # pragma: no cover - not measurable
     sys.stderr.write("WARNING: {}\n".format(err))
     tk = Mock()  # pylint: disable=C0103
+    ttk = Mock()  # pylint: disable=C0103
 
 import os
 import argparse
@@ -266,7 +267,7 @@ def run(args):
     """Start the GUI."""
 
     # Exit if tkinter is not available
-    if isinstance(tk, Mock):
+    if isinstance(tk, Mock) or isinstance(ttk, Mock):
         logging.error("tkinter is not available")
         return False
 
