@@ -8,6 +8,7 @@ import sys
 from unittest.mock import Mock
 try:  # pragma: no cover - not measurable
     import tkinter as tk
+    from tkinter import ttk
     from tkinter import messagebox, simpledialog, filedialog
 except ImportError as err:  # pragma: no cover - not measurable
     sys.stderr.write("WARNING: {}\n".format(err))
@@ -25,11 +26,11 @@ from dtb.common import SHARED, WarningFormatter
 from dtb import settings
 
 
-class Application(tk.Frame):  # pragma: no cover - manual test, pylint: disable=R0904,R0924
+class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable=R0904,R0924
     """Tkinter application for DropTheBeat."""
 
     def __init__(self, master=None, root=None, name=None):
-        tk.Frame.__init__(self, master)
+        ttk.Frame.__init__(self, master)
 
         # Load the root sharing directory
         self.root = root or share.find()
@@ -87,28 +88,28 @@ class Application(tk.Frame):  # pragma: no cover - manual test, pylint: disable=
 
         # Create frames
 
-        frame_settings = tk.Frame(master)
-        frame_incoming = tk.Frame(master)
-        frame_outgoing = tk.Frame(master)
+        frame_settings = ttk.Frame(master)
+        frame_incoming = ttk.Frame(master)
+        frame_outgoing = ttk.Frame(master)
 
-        frame_div1 = tk.Frame(master, height=2, bd=1, relief=tk.SUNKEN)
-        frame_div2 = tk.Frame(master, height=2, bd=1, relief=tk.SUNKEN)
+        separator_1 = ttk.Separator(master)
+        separator_2 = ttk.Separator(master)
 
-        # Create widets for frames
+        # Create widgets for frames
 
-        label_downloads = tk.Label(frame_settings, text="Downloads:")
-        entry_downloads = tk.Entry(frame_settings, state='readonly', textvariable=self.path_downloads)
-        button_downlods = tk.Button(frame_settings, text="...", command=self.browse_downloads)
+        label_downloads = ttk.Label(frame_settings, text="Downloads:")
+        entry_downloads = ttk.Entry(frame_settings, state='readonly', textvariable=self.path_downloads)
+        button_downlods = ttk.Button(frame_settings, text="...", width=0, command=self.browse_downloads)
 
         self.listbox_outgoing = tk.Listbox(frame_outgoing, selectmode=tk.EXTENDED)
-        button_refout = tk.Button(frame_outgoing, text="\u21BB", command=self.update)
-        button_remove = tk.Button(frame_outgoing, text="Remove Selected", command=self.do_remove)
-        button_share = tk.Button(frame_outgoing, text="Share Songs...", command=self.do_share)
+        button_refout = ttk.Button(frame_outgoing, text="\u21BB", width=0, command=self.update)
+        button_remove = ttk.Button(frame_outgoing, text="Remove Selected", command=self.do_remove)
+        button_share = ttk.Button(frame_outgoing, text="Share Songs...", command=self.do_share)
 
         self.listbox_incoming = tk.Listbox(frame_incoming, selectmode=tk.EXTENDED)
-        button_refin = tk.Button(frame_incoming, text="\u21BB", command=self.update)
-        button_ignore = tk.Button(frame_incoming, text="Ignore Selected", command=self.do_ignore)
-        button_download = tk.Button(frame_incoming, text="Download Selected", command=self.do_download)
+        button_refin = ttk.Button(frame_incoming, text="\u21BB", width=0, command=self.update)
+        button_ignore = ttk.Button(frame_incoming, text="Ignore Selected", command=self.do_ignore)
+        button_download = ttk.Button(frame_incoming, text="Download Selected", command=self.do_download)
 
         # Specify frame resizing
 
@@ -155,9 +156,9 @@ class Application(tk.Frame):  # pragma: no cover - manual test, pylint: disable=
         # Pack frames in master
 
         frame_settings.grid(row=0, **stickypad)
-        frame_div1.grid(row=1, sticky=tk.EW, padx=10)
+        separator_1.grid(row=1, sticky=tk.EW, padx=10)
         frame_outgoing.grid(row=2, **stickypad)
-        frame_div2.grid(row=3, sticky=tk.EW, padx=10)
+        separator_2.grid(row=3, sticky=tk.EW, padx=10)
         frame_incoming.grid(row=4, **stickypad)
 
     def browse_downloads(self):
