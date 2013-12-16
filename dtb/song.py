@@ -6,8 +6,7 @@ Classes and functions to interact with songs.
 
 import os
 import shutil
-import hashlib
-import base64
+import uuid
 import logging
 
 import yaml
@@ -30,10 +29,7 @@ class Song(object):
             logging.warning("creating missing folder: {}".format(dirpath))
             os.makedirs(dirpath)
         relpath = os.path.relpath(self.path, dirpath)
-        md5 = hashlib.md5()
-        md5.update(relpath.encode('utf-8'))
-        base = base64.urlsafe_b64encode(md5.digest()).decode('utf-8')
-        filename = "{}.yml".format(base)
+        filename = "{}.yml".format(uuid.uuid4().hex)
         path = os.path.join(dirpath, filename)
         logging.info("creating link {}...".format(path))
         with open(path, 'w') as link:
