@@ -109,8 +109,7 @@ test: develop depends
 
 .PHONY: tests
 tests: develop depends
-	TEST_INTEGRATION=1 $(NOSE) --verbose --stop \
-	                           --cover-package=$(PACKAGE).cli,$(PACKAGE).gui
+	TEST_INTEGRATION=1 $(NOSE) --verbose --stop --cover-package=$(PACKAGE)
 
 # Cleanup ####################################################################
 
