@@ -71,7 +71,7 @@ class Song(object):
         return "{} (to {})".format(filename, self.friendname)
 
     def download(self):
-        """Move the song to the user's downlod directory.
+        """Move the song to the user's download directory.
 
         @return: path to downloaded file or None on broken links
         """
@@ -83,7 +83,7 @@ class Song(object):
         try:
             if src == self.path:
                 logging.info("moving {}...".format(src, self.downloads))
-                # Copy then delete in case the opperation is cancelled
+                # Copy then delete in case the operation is cancelled
                 shutil.copy(src, self.downloads)
                 dst = os.path.join(self.downloads, os.path.basename(src))
                 os.remove(src)
