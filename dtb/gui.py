@@ -81,86 +81,83 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
     def init(self, master):  # pylint: disable=R0914
         """Initialize frames and widgets."""  # pylint: disable=C0301
 
-        # Shared settings
-
         sticky = {'sticky': tk.NSEW}
         pad = {'padx': 5, 'pady': 5}
         stickypad = dict(chain(sticky.items(), pad.items()))
 
-        # Create frames
-
-        frame_settings = ttk.Frame(master)
-        frame_incoming = ttk.Frame(master)
-        frame_outgoing = ttk.Frame(master)
-
-        separator_1 = ttk.Separator(master)
-        separator_2 = ttk.Separator(master)
-
-        # Create widgets for frames
-
-        label_downloads = ttk.Label(frame_settings, text="Downloads:")
-        entry_downloads = ttk.Entry(frame_settings, state='readonly', textvariable=self.path_downloads)
-        button_downlods = ttk.Button(frame_settings, text="...", width=0, command=self.browse_downloads)
-
-        self.listbox_outgoing = tk.Listbox(frame_outgoing, selectmode=tk.EXTENDED)
-        button_refout = ttk.Button(frame_outgoing, text="\u21BB", width=0, command=self.update)
-        button_remove = ttk.Button(frame_outgoing, text="Remove Selected", command=self.do_remove)
-        button_share = ttk.Button(frame_outgoing, text="Share Songs...", command=self.do_share)
-
-        self.listbox_incoming = tk.Listbox(frame_incoming, selectmode=tk.EXTENDED)
-        button_refin = ttk.Button(frame_incoming, text="\u21BB", width=0, command=self.update)
-        button_ignore = ttk.Button(frame_incoming, text="Ignore Selected", command=self.do_ignore)
-        button_download = ttk.Button(frame_incoming, text="Download Selected", command=self.do_download)
-
-        # Specify frame resizing
-
-        frame_settings.rowconfigure(0, weight=1)
-        frame_settings.columnconfigure(0, weight=0)
-        frame_settings.columnconfigure(1, weight=1)
-        frame_settings.columnconfigure(2, weight=0)
-
-        frame_incoming.rowconfigure(0, weight=1)
-        frame_incoming.rowconfigure(1, weight=0)
-        frame_incoming.columnconfigure(0, weight=0)
-        frame_incoming.columnconfigure(1, weight=1)
-        frame_incoming.columnconfigure(2, weight=1)
-
-        frame_outgoing.rowconfigure(0, weight=1)
-        frame_outgoing.rowconfigure(1, weight=0)
-        frame_outgoing.columnconfigure(0, weight=0)
-        frame_outgoing.columnconfigure(1, weight=1)
-        frame_outgoing.columnconfigure(2, weight=1)
-
-        # Pack widgets in frames
-
-        label_downloads.grid(row=0, column=0, **pad)
-        entry_downloads.grid(row=0, column=1, **stickypad)
-        button_downlods.grid(row=0, column=2, ipadx=5, **pad)
-
-        self.listbox_outgoing.grid(row=0, column=0, columnspan=3, **stickypad)
-        button_refout.grid(row=1, column=0, sticky=tk.SW, ipadx=5, **pad)
-        button_remove.grid(row=1, column=1, sticky=tk.SW, ipadx=5, **pad)
-        button_share.grid(row=1, column=2, sticky=tk.SE, ipadx=5, **pad)
-
-        self.listbox_incoming.grid(row=0, column=0, columnspan=3, **stickypad)
-        button_refin.grid(row=1, column=0, sticky=tk.SW, ipadx=5, **pad)
-        button_ignore.grid(row=1, column=1, sticky=tk.SW, ipadx=5, **pad)
-        button_download.grid(row=1, column=2, sticky=tk.SE, ipadx=5, **pad)
-
-        # Specify master resizing
-
+        # Configure grid
         master.rowconfigure(0, weight=0)
         master.rowconfigure(2, weight=1)
         master.rowconfigure(4, weight=1)
         master.columnconfigure(0, weight=1)
 
-        # Pack frames in master
+        # Create widgets
+        def frame_settings(master):
+            """Frame for the settings."""
+            frame = ttk.Frame(master)
 
-        frame_settings.grid(row=0, **stickypad)
-        separator_1.grid(row=1, sticky=tk.EW, padx=10)
-        frame_outgoing.grid(row=2, **stickypad)
-        separator_2.grid(row=3, sticky=tk.EW, padx=10)
-        frame_incoming.grid(row=4, **stickypad)
+            # Configure grid
+            frame.rowconfigure(0, weight=1)
+            frame.columnconfigure(0, weight=0)
+            frame.columnconfigure(1, weight=1)
+            frame.columnconfigure(2, weight=0)
+
+            # Place widgets
+            ttk.Label(frame, text="Downloads:").grid(row=0, column=0, **pad)
+            ttk.Entry(frame, state='readonly', textvariable=self.path_downloads).grid(row=0, column=1, **stickypad)
+            ttk.Button(frame, text="...", width=0, command=self.browse_downloads).grid(row=0, column=2, ipadx=5, **pad)
+
+            return frame
+
+        def frame_incoming(master):
+            """Frame for incoming songs."""
+            frame = ttk.Frame(master)
+
+            # Configure grid
+            frame.rowconfigure(0, weight=1)
+            frame.rowconfigure(1, weight=0)
+            frame.columnconfigure(0, weight=0)
+            frame.columnconfigure(1, weight=1)
+            frame.columnconfigure(2, weight=1)
+
+            # Place widgets
+            self.listbox_incoming = tk.Listbox(frame, selectmode=tk.EXTENDED)
+            self.listbox_incoming.grid(row=0, column=0, columnspan=3, **stickypad)
+            ttk.Button(frame, text="\u21BB", width=0, command=self.update).grid(row=1, column=0, sticky=tk.SW, ipadx=5, **pad)
+            ttk.Button(frame, text="Ignore Selected", command=self.do_ignore).grid(row=1, column=1, sticky=tk.SW, ipadx=5, **pad)
+            ttk.Button(frame, text="Download Selected", command=self.do_download).grid(row=1, column=2, sticky=tk.SE, ipadx=5, **pad)
+            return frame
+
+        def frame_outgoing(master):
+            """Frame for outgoing songs."""
+            frame = ttk.Frame(master)
+
+            # Configure grid
+            frame.rowconfigure(0, weight=1)
+            frame.rowconfigure(1, weight=0)
+            frame.columnconfigure(0, weight=0)
+            frame.columnconfigure(1, weight=1)
+            frame.columnconfigure(2, weight=1)
+
+            # Place widgets
+            self.listbox_outgoing = tk.Listbox(frame, selectmode=tk.EXTENDED)
+            self.listbox_outgoing.grid(row=0, column=0, columnspan=3, **stickypad)
+            ttk.Button(frame, text="\u21BB", width=0, command=self.update).grid(row=1, column=0, sticky=tk.SW, ipadx=5, **pad)
+            ttk.Button(frame, text="Remove Selected", command=self.do_remove).grid(row=1, column=1, sticky=tk.SW, ipadx=5, **pad)
+            ttk.Button(frame, text="Share Songs...", command=self.do_share).grid(row=1, column=2, sticky=tk.SE, ipadx=5, **pad)
+
+            return frame
+
+        def separator(master):
+            """Widget to separate frames."""
+            return ttk.Separator(master)
+
+        # Place widgets
+        frame_settings(master).grid(row=0, **stickypad)
+        separator(master).grid(row=1, sticky=tk.EW, padx=10)
+        frame_outgoing(master).grid(row=2, **stickypad)
+        separator(master).grid(row=3, sticky=tk.EW, padx=10)
+        frame_incoming(master).grid(row=4, **stickypad)
 
     def browse_downloads(self):
         """Browser for a new downloads directory."""
