@@ -46,5 +46,5 @@ setuptools.setup(
         'Topic :: Multimedia :: Sound/Audio',
     ],
 
-    install_requires=["PyYAML==3.10", "sqlalchemy==0.8.3"],
+    install_requires=["PyYAML==3.10"],
 )
