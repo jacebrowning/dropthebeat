@@ -79,12 +79,11 @@ Launch the GUI:
     dtb --gui
 
 
-For Developers
-==============
+For Contributors
+================
 
 Requirements
 ------------
-* Python 3: http://www.python.org/download/releases/3.3.3/#download
 * GNU Make:
 	* Windows: http://cygwin.com/install.html
 	* Mac: https://developer.apple.com/xcode
@@ -93,8 +92,8 @@ Requirements
 * Pandoc: http://johnmacfarlane.net/pandoc/
 
 
-Environment
------------
+Installation
+------------
 
 Create a virtualenv:
 
