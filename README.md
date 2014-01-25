@@ -22,13 +22,13 @@ Getting Started
 Requirements
 ------------
 
-* Python 3: http://www.python.org/download/releases/3.3.3/#download
+* Python 3.3: http://www.python.org/download/releases/3.3.3/#download
 
 
 Installation
 ------------
 
-DropTheBeat can be installed with ``pip`` or ``easy_install``:
+DropTheBeat can be installed with ``pip``:
 
     pip install DropTheBeat
 
