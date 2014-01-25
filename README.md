@@ -3,6 +3,7 @@ DropTheBeat
 
 [![Build Status](https://travis-ci.org/jacebrowning/dropthebeat.png?branch=master)](https://travis-ci.org/jacebrowning/dropthebeat)
 [![Coverage Status](https://coveralls.io/repos/jacebrowning/dropthebeat/badge.png?branch=master)](https://coveralls.io/r/jacebrowning/dropthebeat?branch=master)
+[![PyPI Version](https://badge.fury.io/py/DropTheBeat.png)](http://badge.fury.io/py/DropTheBeat)
 
 Music sharing using Dropbox.
 
