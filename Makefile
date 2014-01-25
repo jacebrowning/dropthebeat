@@ -1,8 +1,7 @@
 PROJECT := DropTheBeat
 PACKAGE := dtb
-SOURCES := Makefile setup.py README.md
+SOURCES := Makefile setup.py
 
-CACHE := .cache
 VIRTUALENV := env
 DEPENDS := $(VIRTUALENV)/.depends
 EGG_INFO := $(subst -,_,$(PROJECT)).egg-info
@@ -42,38 +41,33 @@ $(EGG_INFO): $(SOURCES)
 	touch $(EGG_INFO)  # flag to indicate package is installed
 
 .PHONY: .env
-.env: $(PYTHON)
-$(PYTHON):
+.env: $(PIP)
+$(PIP):
 	virtualenv --python $(VERSION) $(VIRTUALENV)
 
 .PHONY: depends
 depends: .env $(DEPENDS) $(SOURCES)
 $(DEPENDS):
-	$(PIP) install docutils pdoc pep8 nose coverage wheel \
-	       --use-mirrors --download-cache=$(CACHE)
-	$(MAKE) .pylint
+	$(PIP) install docutils pdoc pep8 pylint nose coverage wheel
 	touch $(DEPENDS)  # flag to indicate dependencies are installed
-
-# issue: pylint is not currently installing on Windows from PyPI
-# tracker: https://bitbucket.org/logilab/pylint/issue/51
-# workaround: install from the source repositories on Windows/Cygwin
-.PHONY: .pylint
-ifeq ($(shell uname),$(filter $(shell uname),Windows CYGWIN_NT-6.1 CYGWIN_NT-6.1-WOW64))
-.pylint: .env
-	$(PIP) install https://bitbucket.org/moben/logilab-common/get/cb9cb5b8fff228b9a4244e4a6d9b2464a7b6148f.zip --download-cache=$(CACHE)
-	$(PIP) install https://bitbucket.org/logilab/pylint/get/8200a32b14597c24f0f4706417bf30aec1e25386.zip --download-cache=$(CACHE)
-else
-.pylint: .env
-	$(PIP) install pylint --use-mirrors --download-cache=$(CACHE)
-endif
 
 # Documentation ##############################################################
 
 .PHONY: doc
-doc: depends
-	pandoc -f markdown_github -t rst -o README.rst README.md
+doc: depends readme apidocs
+
+.PHONY: readme
+readme: docs/README-github.html docs/README-pypi.html
+docs/README-github.html: README.md
 	pandoc -f markdown_github -t html -o docs/README-github.html README.md
+docs/README-pypi.html: README.rst
 	$(PYTHON) $(RST2HTML) README.rst docs/README-pypi.html
+README.rst: README.md
+	pandoc -f markdown_github -t rst -o README.rst README.md
+
+.PHONY: apidocs
+apidocs: depends apidocs/$(PACKAGE)/index.html
+apidocs/$(PACKAGE)/index.html: $(shell find $(PACKAGE) -name '*.py')
 	$(PYTHON) $(PDOC) --html --overwrite $(PACKAGE) --html-dir apidocs
 
 .PHONY: read
@@ -117,19 +111,24 @@ tests: develop depends
 .clean-env:
 	rm -rf $(VIRTUALENV)
 
+.PHONY: .clean-build
+.clean-build:
+		find . -name '*.pyc' -delete; find . -name '__pycache__' -delete
+
+.PHONY: .clean-doc
+.clean-doc:
+	rm -rf apidocs docs/README*.html README.rst
+
+.PHONY: .clean-test
+.clean-test:
+	rm -rf .coverage
+
 .PHONY: .clean-dist
 .clean-dist:
 	rm -rf dist build *.egg-info 
 
 .PHONY: clean
-clean: .clean-env .clean-dist
-	rm -rf */*.pyc */*/*.pyc */*/*/*.pyc */*/*/*/*.pyc
-	rm -rf */__pycache__ */*/__pycache__ */*/*/__pycache__ */*/*/*/__pycache__
-	rm -rf apidocs docs/README.html .coverage README.rst
-
-.PHONY: clean-all
-clean-all: clean
-	rm -rf $(CACHE)
+clean: .clean-dist .clean-test .clean-doc .clean-build .clean-env 
 
 # Release ####################################################################
 

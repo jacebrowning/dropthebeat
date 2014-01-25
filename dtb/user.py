@@ -192,12 +192,12 @@ class User(object):
         data = yaml.load(text)
         if isinstance(data, list):
             for info2 in data:
-                if (info[0] == info2.get('computer', None) and
-                    info[1] == info2.get('username', None)):
+                comp_user = info[:2]
+                comp_user2 = (info2.get('computer', None),
+                              info2.get('username', None))
+                if comp_user == comp_user2:
                     downloads = info2.get('downloads', None)
                     break
-            else:
-                logging.warning("no downloads path for: {}".format(info))
         return downloads
 
     @path_downloads.setter
@@ -276,7 +276,7 @@ class User(object):
                     found = True
                     # TODO: is this the best way to invert ownership?
                     song.friendname = friend.name
-                    logging.debug("outoing: {}".format(song))
+                    logging.debug("outgoing: {}".format(song))
                     yield song
         if not found:
             logging.debug("no outgoing songs ({})".format(self.name))

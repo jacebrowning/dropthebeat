@@ -1,6 +1,9 @@
 DropTheBeat
 ===========
 
+[![Build Status](https://travis-ci.org/jacebrowning/dropthebeat.png?branch=master)](https://travis-ci.org/jacebrowning/dropthebeat)
+[![Coverage Status](https://coveralls.io/repos/jacebrowning/dropthebeat/badge.png?branch=master)](https://coveralls.io/r/jacebrowning/dropthebeat?branch=master)
+
 Music sharing using Dropbox.
 
 Features
