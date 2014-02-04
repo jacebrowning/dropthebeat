@@ -13,6 +13,7 @@ README = 'README.rst'
 import os
 if not os.path.exists(README):
     open(README, 'wb').close()
+CHANGES = 'CHANGES.md'
 
 setuptools.setup(
     name=__project__,
@@ -28,7 +29,8 @@ setuptools.setup(
     entry_points={'console_scripts': [CLI + ' = dtb.cli:main',
                                       GUI + ' = dtb.gui:main']},
 
-    long_description=open(README).read(),
+    long_description=(open(README).read() + '\n' +
+                      open(CHANGES).read()),
     license='LGPL',
     classifiers=[
         'Development Status :: 3 - Alpha',
