@@ -158,5 +158,5 @@ dev:
 # Execution ##################################################################
 
 .PHONY: gui
-gui: develop
+gui: env
 	$(BIN)/DropTheBeat$(EXE)
