@@ -84,12 +84,13 @@ For Contributors
 
 Requirements
 ------------
+
 * GNU Make:
-	* Windows: http://cygwin.com/install.html
-	* Mac: https://developer.apple.com/xcode
-	* Linux: http://www.gnu.org/software/make
-* virtualenv: https://pypi.python.org/pypi/virtualenv
-* Pandoc: http://johnmacfarlane.net/pandoc/
+    * Windows: http://cygwin.com/install.html
+    * Mac: https://developer.apple.com/xcode
+    * Linux: http://www.gnu.org/software/make (likely already installed)
+* virtualenv: https://pypi.python.org/pypi/virtualenv#installation
+* Pandoc: http://johnmacfarlane.net/pandoc/installing.html
 
 
 Installation
@@ -97,20 +98,28 @@ Installation
 
 Create a virtualenv:
 
-    make develop
-
-Run static analysis:
-
-    make doc
-    make pep8
-    make pylint
-    make check  # all of the above
+    make env
 
 Run the tests:
 
     make test
     make tests  # includes integration tests
 
-Launch the GUI from the virtualenv:
+Build the documentation:
 
-    make gui  # sets TCL_LIBRARY on Windows
+    make doc
+
+Run static analysis:
+
+    make pep8
+    make pylint
+    make check  # pep8 and pylint
+
+Prepare a release:
+
+    make dist  # dry run
+    make upload
+
+Launch the GUI:
+
+    make gui
