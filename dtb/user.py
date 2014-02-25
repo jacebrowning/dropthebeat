@@ -214,7 +214,7 @@ class User(object):
             data = []
         for index, info2 in enumerate(data):
             if (info[0] == info2.get('computer', None) and
-                info[1] == info2.get('username', None)):
+                    info[1] == info2.get('username', None)):
                 info2['downloads'] = downloads
                 data[index] = info2
                 break

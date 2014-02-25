@@ -4,20 +4,23 @@
 Setup script for DropTheBeat.
 """
 
-from dtb import __project__, CLI, GUI
+from dtb import __project__, __version__, CLI, GUI
 
 import setuptools
 
 # Touch the README, it will be generated on release
 README = 'README.rst'
 import os
-if not os.path.exists(README):
-    open(README, 'wb').close()
-CHANGES = 'CHANGES.md'
+if os.path.exists('README.rst'):
+    README = open('README.rst').read()
+else:
+    README = ""  # a placeholder, readme is generated on release
+CHANGES = open('CHANGES.md').read()
+
 
 setuptools.setup(
     name=__project__,
-    version='0.0.6',
+    version=__version__,
 
     description="Music sharing using Dropbox.",
     url='http://github.com/jacebrowning/dropthebeat',
@@ -29,8 +32,7 @@ setuptools.setup(
     entry_points={'console_scripts': [CLI + ' = dtb.cli:main',
                                       GUI + ' = dtb.gui:main']},
 
-    long_description=(open(README).read() + '\n' +
-                      open(CHANGES).read()),
+    long_description=(README + '\n' + CHANGES),
     license='LGPL',
     classifiers=[
         'Development Status :: 3 - Alpha',

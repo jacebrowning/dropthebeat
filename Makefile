@@ -3,23 +3,31 @@ PACKAGE := dtb
 SOURCES := Makefile setup.py $(shell find $(PACKAGE) -name '*.py')
 
 ENV := env
-DEPENDS := $(ENV)/.depends
+DEPENDS_CI := $(ENV)/.depends.ci
+DEPENDS_DEV := $(ENV)/.depends.dev
 EGG_INFO := $(subst -,_,$(PROJECT)).egg-info
 
-ifeq ($(OS),Windows_NT)
-    SYS_PYTHON := C:\\Python33\\python.exe
-    SYS_VIRTUALENV := C:\\Python33\\Scripts\\virtualenv.exe
-    BIN := $(ENV)/Scripts
+PLATFORM := $(shell python -c 'import sys; print(sys.platform)')
+
+ifneq ($(findstring win32, $(PLATFORM)), )
+	SYS_PYTHON := C:\\Python33\\python.exe
+	SYS_VIRTUALENV := C:\\Python33\\Scripts\\virtualenv.exe
+	BIN := $(ENV)/Scripts
 	EXE := .exe
 	OPEN := cmd /c start
 	# https://bugs.launchpad.net/virtualenv/+bug/449537
 	export TCL_LIBRARY=C:\\Python33\\tcl\\tcl8.5
 else
-    SYS_PYTHON := python3
-    SYS_VIRTUALENV := virtualenv
-    BIN := $(ENV)/bin
-	OPEN := open
+	SYS_PYTHON := python3
+	SYS_VIRTUALENV := virtualenv
+	BIN := $(ENV)/bin
+	ifneq ($(findstring cygwin, $(PLATFORM)), )
+		OPEN := cygstart
+	else
+		OPEN := open
+	endif
 endif
+
 MAN := man
 SHARE := share
 
@@ -28,6 +36,7 @@ PIP := $(BIN)/pip$(EXE)
 RST2HTML := $(BIN)/rst2html.py
 PDOC := $(BIN)/pdoc
 PEP8 := $(BIN)/pep8$(EXE)
+PEP257 := $(BIN)/pep257$(EXE)
 PYLINT := $(BIN)/pylint$(EXE)
 NOSE := $(BIN)/nosetests$(EXE)
 
@@ -38,7 +47,7 @@ all: env
 
 .PHONY: env
 env: .virtualenv $(EGG_INFO)
-$(EGG_INFO): $(SOURCES)
+$(EGG_INFO): Makefile setup.py
 	$(PYTHON) setup.py develop
 	touch $(EGG_INFO)  # flag to indicate package is installed
 
@@ -48,10 +57,19 @@ $(PIP):
 	$(SYS_VIRTUALENV) --python $(SYS_PYTHON) $(ENV)
 
 .PHONY: depends
-depends: .virtualenv $(DEPENDS) Makefile
-$(DEPENDS):
-	$(PIP) install docutils pdoc pep8 pylint nose coverage wheel
-	touch $(DEPENDS)  # flag to indicate dependencies are installed
+depends: .depends-ci .depends-dev
+
+.PHONY: .depends-ci
+.depends-ci: .virtualenv Makefile $(DEPENDS_CI)
+$(DEPENDS_CI): Makefile
+	$(PIP) install pep8 pep257 nose coverage
+	touch $(DEPENDS_CI)  # flag to indicate dependencies are installed
+
+.PHONY: .depends-dev
+.depends-dev: .virtualenv Makefile $(DEPENDS_DEV)
+$(DEPENDS_DEV): Makefile
+	$(PIP) install docutils pdoc pylint wheel
+	touch $(DEPENDS_DEV)  # flag to indicate dependencies are installed
 
 # Documentation ##############################################################
 
@@ -59,7 +77,7 @@ $(DEPENDS):
 doc: readme apidocs
 
 .PHONY: readme
-readme: depends docs/README-github.html docs/README-pypi.html
+readme: .depends-ci docs/README-github.html docs/README-pypi.html
 docs/README-github.html: README.md
 	pandoc -f markdown_github -t html -o docs/README-github.html README.md
 docs/README-pypi.html: README.rst
@@ -68,7 +86,7 @@ README.rst: README.md
 	pandoc -f markdown_github -t rst -o README.rst README.md
 
 .PHONY: apidocs
-apidocs: depends apidocs/$(PACKAGE)/index.html
+apidocs: .depends-ci apidocs/$(PACKAGE)/index.html
 apidocs/$(PACKAGE)/index.html: $(SOURCES)
 	$(PYTHON) $(PDOC) --html --overwrite $(PACKAGE) --html-dir apidocs
 
@@ -81,30 +99,35 @@ read: doc
 # Static Analysis ############################################################
 
 .PHONY: pep8
-pep8: depends
-	$(PEP8) $(PACKAGE) --ignore=E501 
+pep8: env .depends-ci
+	$(PEP8) $(PACKAGE) --ignore=E501
+
+.PHONY: pep257
+pep257: env .depends-ci
+	$(PEP257) $(PACKAGE) --ignore=E501
 
 .PHONY: pylint
-pylint: depends
+pylint: env .depends-ci
 	$(PYLINT) $(PACKAGE) --reports no \
 	                     --msg-template="{msg_id}:{line:3d},{column}:{msg}" \
 	                     --max-line-length=79 \
 	                     --disable=I0011,W0142,W0511,R0801
 
 .PHONY: check
-check: depends
-	$(MAKE) pep8
-	$(MAKE) pylint
+check: pep8 pep257 pylint
 
 # Testing ####################################################################
 
 .PHONY: test
-test: env depends
+test: env .depends-ci
 	$(NOSE)
 
 .PHONY: tests
-tests: env depends
+tests: env .depends-ci
 	TEST_INTEGRATION=1 $(NOSE) --verbose --stop --cover-package=$(PACKAGE)
+
+.PHONY: ci
+ci: pep8 test tests
 
 # Cleanup ####################################################################
 
@@ -112,7 +135,7 @@ tests: env depends
 clean: .clean-dist .clean-test .clean-doc .clean-build
 
 .PHONY: clean-all
-clean-all: clean .clean-env 
+clean-all: clean .clean-env
 
 .PHONY: .clean-env
 .clean-env:
@@ -138,14 +161,25 @@ clean-all: clean .clean-env
 
 # Release ####################################################################
 
+.PHONY: .git-no-changes
+.git-no-changes:
+	@if git diff --name-only --exit-code;         \
+	then                                          \
+		echo Git working copy is clean...;        \
+	else                                          \
+		echo ERROR: Git working copy is dirty!;   \
+		echo Commit your changes and try again.;  \
+		exit -1;                                  \
+	fi;
+
 .PHONY: dist
-dist: env depends check test tests doc
+dist: .git-no-changes env depends check test tests doc
 	$(PYTHON) setup.py sdist
 	$(PYTHON) setup.py bdist_wheel
 	$(MAKE) read
- 
+
 .PHONY: upload
-upload: env depends doc
+upload: .git-no-changes env depends doc
 	$(PYTHON) setup.py register sdist upload
 	$(PYTHON) setup.py bdist_wheel upload
 	$(MAKE) dev  # restore the development environment
