@@ -31,7 +31,7 @@ Requirements
 Installation
 ------------
 
-DropTheBeat can be installed with pip:
+DropTheBeat can be installed with 'pip':
 
     pip install DropTheBeat
 
