@@ -7,6 +7,8 @@ DropTheBeat
 
 Music sharing using Dropbox.
 
+![screenshot](docs/screenshot.png)
+
 Features
 --------
 
