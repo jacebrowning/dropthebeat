@@ -27,7 +27,7 @@ from dtb.common import SHARED, WarningFormatter
 from dtb import settings
 
 
-class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable=R0901,R0904,R0924
+class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable=R0901,R0904
     """Tkinter application for DropTheBeat."""
 
     def __init__(self, master=None, root=None, name=None):

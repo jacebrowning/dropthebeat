@@ -37,7 +37,7 @@ class User(object):
         return self.path == other.path
 
     def __ne__(self, other):
-        return not (self == other)
+        return not self == other
 
     @staticmethod
     def new(root, name, downloads=None):
