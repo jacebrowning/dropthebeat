@@ -31,12 +31,14 @@ Requirements
 Installation
 ------------
 
-DropTheBeat can be installed with ``pip``:
+DropTheBeat can be installed with pip:
 
     pip install DropTheBeat
 
 Or directly from the source code:
 
+    git clone https://github.com/jacebrowning/dropthebeat.git
+    cd dropthebeat
     python setup.py install
 
 
