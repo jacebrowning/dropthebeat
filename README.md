@@ -7,7 +7,6 @@ DropTheBeat
 
 Music sharing using Dropbox.
 
-![screenshot](docs/screenshot.png)
 
 Features
 --------
@@ -15,6 +14,8 @@ Features
 * Recommend songs to friends
 * Get a list of songs shared by friends
 * Download the songs to your computer
+
+![screenshot](https://raw.github.com/jacebrowning/dropthebeat/master/docs/screenshot.png)
 
 
 
