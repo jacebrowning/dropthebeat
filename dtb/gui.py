@@ -72,29 +72,33 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
         # Initialize the GUI
         self.listbox_outgoing = None
         self.listbox_incoming = None
-        self.init(master)
+        frame = self.init(master)
+        frame.pack(fill=tk.BOTH, expand=1)
 
         # Show the GUI
         master.deiconify()
         self.update()
 
-    def init(self, master):  # pylint: disable=R0914
+    def init(self, root):  # pylint: disable=R0914
         """Initialize frames and widgets."""  # pylint: disable=C0301
 
-        sticky = {'sticky': tk.NSEW}
-        pad = {'padx': 5, 'pady': 5}
-        stickypad = dict(chain(sticky.items(), pad.items()))
+        # Shared keyword arguments
+        kw_f = {'padding': 5}  # constructor arguments for frames
+        kw_gp = {'padx': 5, 'pady': 5}  # grid arguments for padded widgets
+        kw_gs = {'sticky': tk.NSEW}  # grid arguments for sticky widgets
+        kw_gsp = dict(chain(kw_gs.items(), kw_gp.items()))  # grid arguments for sticky padded widgets
 
         # Configure grid
-        master.rowconfigure(0, weight=0)
-        master.rowconfigure(2, weight=1)
-        master.rowconfigure(4, weight=1)
-        master.columnconfigure(0, weight=1)
+        frame = ttk.Frame(root, **kw_f)
+        frame.rowconfigure(0, weight=0)
+        frame.rowconfigure(2, weight=1)
+        frame.rowconfigure(4, weight=1)
+        frame.columnconfigure(0, weight=1)
 
         # Create widgets
         def frame_settings(master):
             """Frame for the settings."""
-            frame = ttk.Frame(master)
+            frame = ttk.Frame(master, **kw_f)
 
             # Configure grid
             frame.rowconfigure(0, weight=1)
@@ -103,15 +107,15 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
             frame.columnconfigure(2, weight=0)
 
             # Place widgets
-            ttk.Label(frame, text="Downloads:").grid(row=0, column=0, **pad)
-            ttk.Entry(frame, state='readonly', textvariable=self.path_downloads).grid(row=0, column=1, **stickypad)
-            ttk.Button(frame, text="...", width=0, command=self.browse_downloads).grid(row=0, column=2, ipadx=5, **pad)
+            ttk.Label(frame, text="Downloads:").grid(row=0, column=0, **kw_gp)
+            ttk.Entry(frame, state='readonly', textvariable=self.path_downloads).grid(row=0, column=1, **kw_gsp)
+            ttk.Button(frame, text="...", width=0, command=self.browse_downloads).grid(row=0, column=2, ipadx=5, **kw_gp)
 
             return frame
 
         def frame_incoming(master):
             """Frame for incoming songs."""
-            frame = ttk.Frame(master)
+            frame = ttk.Frame(master, **kw_f)
 
             # Configure grid
             frame.rowconfigure(0, weight=1)
@@ -122,15 +126,15 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
 
             # Place widgets
             self.listbox_incoming = tk.Listbox(frame, selectmode=tk.EXTENDED)
-            self.listbox_incoming.grid(row=0, column=0, columnspan=3, **stickypad)
-            ttk.Button(frame, text="\u21BB", width=0, command=self.update).grid(row=1, column=0, sticky=tk.SW, ipadx=5, **pad)
-            ttk.Button(frame, text="Ignore Selected", command=self.do_ignore).grid(row=1, column=1, sticky=tk.SW, ipadx=5, **pad)
-            ttk.Button(frame, text="Download Selected", command=self.do_download).grid(row=1, column=2, sticky=tk.SE, ipadx=5, **pad)
+            self.listbox_incoming.grid(row=0, column=0, columnspan=3, **kw_gsp)
+            ttk.Button(frame, text="\u21BB", width=0, command=self.update).grid(row=1, column=0, sticky=tk.SW, ipadx=5, **kw_gp)
+            ttk.Button(frame, text="Ignore Selected", command=self.do_ignore).grid(row=1, column=1, sticky=tk.SW, ipadx=5, **kw_gp)
+            ttk.Button(frame, text="Download Selected", command=self.do_download).grid(row=1, column=2, sticky=tk.SE, ipadx=5, **kw_gp)
             return frame
 
         def frame_outgoing(master):
             """Frame for outgoing songs."""
-            frame = ttk.Frame(master)
+            frame = ttk.Frame(master, **kw_f)
 
             # Configure grid
             frame.rowconfigure(0, weight=1)
@@ -141,10 +145,10 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
 
             # Place widgets
             self.listbox_outgoing = tk.Listbox(frame, selectmode=tk.EXTENDED)
-            self.listbox_outgoing.grid(row=0, column=0, columnspan=3, **stickypad)
-            ttk.Button(frame, text="\u21BB", width=0, command=self.update).grid(row=1, column=0, sticky=tk.SW, ipadx=5, **pad)
-            ttk.Button(frame, text="Remove Selected", command=self.do_remove).grid(row=1, column=1, sticky=tk.SW, ipadx=5, **pad)
-            ttk.Button(frame, text="Share Songs...", command=self.do_share).grid(row=1, column=2, sticky=tk.SE, ipadx=5, **pad)
+            self.listbox_outgoing.grid(row=0, column=0, columnspan=3, **kw_gsp)
+            ttk.Button(frame, text="\u21BB", width=0, command=self.update).grid(row=1, column=0, sticky=tk.SW, ipadx=5, **kw_gp)
+            ttk.Button(frame, text="Remove Selected", command=self.do_remove).grid(row=1, column=1, sticky=tk.SW, ipadx=5, **kw_gp)
+            ttk.Button(frame, text="Share Songs...", command=self.do_share).grid(row=1, column=2, sticky=tk.SE, ipadx=5, **kw_gp)
 
             return frame
 
@@ -153,11 +157,13 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
             return ttk.Separator(master)
 
         # Place widgets
-        frame_settings(master).grid(row=0, **stickypad)
-        separator(master).grid(row=1, sticky=tk.EW, padx=10)
-        frame_outgoing(master).grid(row=2, **stickypad)
-        separator(master).grid(row=3, sticky=tk.EW, padx=10)
-        frame_incoming(master).grid(row=4, **stickypad)
+        frame_settings(frame).grid(row=0, **kw_gs)
+        separator(frame).grid(row=1, padx=10, pady=5, **kw_gs)
+        frame_outgoing(frame).grid(row=2, **kw_gs)
+        separator(frame).grid(row=3, padx=10, pady=5, **kw_gs)
+        frame_incoming(frame).grid(row=4, **kw_gs)
+
+        return frame
 
     def browse_downloads(self):
         """Browser for a new downloads directory."""
