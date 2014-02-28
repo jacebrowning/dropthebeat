@@ -82,6 +82,8 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
     def init(self, root):  # pylint: disable=R0914
         """Initialize frames and widgets."""  # pylint: disable=C0301
 
+        mac = sys.platform == 'darwin'
+
         # Shared keyword arguments
         kw_f = {'padding': 5}  # constructor arguments for frames
         kw_gp = {'padx': 5, 'pady': 5}  # grid arguments for padded widgets
@@ -125,7 +127,7 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
             frame.columnconfigure(2, weight=1)
 
             # Place widgets
-            self.listbox_incoming = tk.Listbox(frame, selectmode=tk.EXTENDED)
+            self.listbox_incoming = tk.Listbox(frame, selectmode=tk.EXTENDED if mac else tk.MULTIPLE)
             self.listbox_incoming.grid(row=0, column=0, columnspan=3, **kw_gsp)
             ttk.Button(frame, text="\u21BB", width=0, command=self.update).grid(row=1, column=0, sticky=tk.SW, ipadx=5, **kw_gp)
             ttk.Button(frame, text="Ignore Selected", command=self.do_ignore).grid(row=1, column=1, sticky=tk.SW, ipadx=5, **kw_gp)
@@ -144,7 +146,7 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
             frame.columnconfigure(2, weight=1)
 
             # Place widgets
-            self.listbox_outgoing = tk.Listbox(frame, selectmode=tk.EXTENDED)
+            self.listbox_outgoing = tk.Listbox(frame, selectmode=tk.EXTENDED if mac else tk.MULTIPLE)
             self.listbox_outgoing.grid(row=0, column=0, columnspan=3, **kw_gsp)
             ttk.Button(frame, text="\u21BB", width=0, command=self.update).grid(row=1, column=0, sticky=tk.SW, ipadx=5, **kw_gp)
             ttk.Button(frame, text="Remove Selected", command=self.do_remove).grid(row=1, column=1, sticky=tk.SW, ipadx=5, **kw_gp)
@@ -281,10 +283,11 @@ def run(args):
         root.minsize(500, 500)
 
         # Map the Mac 'command' key to 'control'
-        root.bind_class('Listbox', '<Command-Button-1>',
-                        root.bind_class('Listbox', '<Control-Button-1>'))
+        if sys.platform == 'darwin':
+            root.bind_class('Listbox', '<Command-Button-1>',
+                            root.bind_class('Listbox', '<Control-Button-1>'))
 
-        # Temporarity hide the window for other dialogs
+        # Temporarily hide the window for other dialogs
         root.withdraw()
 
         # Start the application
