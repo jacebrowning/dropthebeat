@@ -122,7 +122,7 @@ class User(object):
         # Return the updated user
         return user
 
-    ### properties based on path #############################################
+    # properties based on path ###############################################
 
     @property
     def name(self):
@@ -164,7 +164,7 @@ class User(object):
         """Get the path to the user's requests file."""
         return os.path.join(self.path, User.SETTINGS)
 
-    ### properties based on files ############################################
+    # properties based on files ##############################################
 
     @property
     def info(self):
@@ -281,7 +281,7 @@ class User(object):
         if not found:
             logging.debug("no outgoing songs ({})".format(self.name))
 
-    ### methods ##############################################################
+    # methods ################################################################
 
     def cleanup(self):
         """Delete invalid users, unlinked songs, and empty directories."""
