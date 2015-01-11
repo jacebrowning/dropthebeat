@@ -4,7 +4,7 @@ Changelog
 0.1 (dev)
 ---------
 
-- TBD
+- Added scrollbars
 
 0.0.6 (2014/01/25)
 ------------------
