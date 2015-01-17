@@ -19,13 +19,33 @@ from dtb.test import FILES
 class TestFunctions(unittest.TestCase):  # pylint: disable=R0904
     """Unit tests for the sharing functions class."""  # pylint: disable=C0103,W0212
 
-    def test_find(self):
-        """Verify a sharing folder can be found."""
+    def test_find_dropbox(self):
+        """Verify a sharing folder can be found for Dropbox."""
         temp = tempfile.mkdtemp()
         os.makedirs(os.path.join(temp, 'Dropbox', 'DropTheBeat'))
         try:
             path = share.find(top=temp)
             self.assertTrue(os.path.isdir(path))
+        finally:
+            shutil.rmtree(temp)
+
+    def test_find_dropbox_personal(self):
+        """Verify a sharing folder can be found for Dropbox (Personal)."""
+        temp = tempfile.mkdtemp()
+        os.makedirs(os.path.join(temp, 'Dropbox (Personal)', 'DropTheBeat'))
+        try:
+            path = share.find(top=temp)
+            self.assertTrue(os.path.isdir(path))
+        finally:
+            shutil.rmtree(temp)
+
+    @patch('dtb.share.SHARE_DEPTH', 2)
+    def test_find_depth(self):
+        """Verify a sharing folder is not found below the depth."""
+        temp = tempfile.mkdtemp()
+        os.makedirs(os.path.join(temp, 'Dropbox', 'a', 'b', 'DropTheBeat'))
+        try:
+            self.assertRaises(OSError, share.find, top=temp)
         finally:
             shutil.rmtree(temp)
 

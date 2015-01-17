@@ -15,8 +15,10 @@ ROOTS = (
 )
 SERVICES = (
     'Dropbox',
+    'Dropbox (Personal)',
 )
 SHARE = 'DropTheBeat'
+SHARE_DEPTH = 3  # number of levels to search for share directory
 
 
 def find(top=None):
@@ -30,9 +32,14 @@ def find(top=None):
             service = os.path.join(top, directory)
             logging.debug("found service: {}".format(service))
             logging.debug("looking for '{}' in {}...".format(SHARE, service))
-            for dirpath, _, _, in os.walk(service):
+            for dirpath, dirnames, _, in os.walk(service):
+                depth = dirpath.count(os.path.sep) - service.count(os.path.sep)
+                if depth >= SHARE_DEPTH:
+                    del dirnames[:]
+                    continue
                 path = os.path.join(dirpath, SHARE)
-                if os.path.isdir(path):
+                if os.path.isdir(path) and \
+                        not os.path.isfile(os.path.join(path, 'setup.py')):
                     logging.info("found share: {}".format(path))
                     return path
 
