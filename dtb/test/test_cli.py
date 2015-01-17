@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-"""
-Tests for the dtb.cli module.
-"""
+"""Tests for the dtb.cli module."""
 
 import unittest
 from unittest.mock import patch, Mock

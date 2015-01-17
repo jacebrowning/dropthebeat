@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-"""
-Unit tests for the dtb.share module.
-"""
+"""Unit tests for the dtb.share module."""
 
 import unittest
 from unittest.mock import patch, Mock

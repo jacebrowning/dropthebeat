@@ -1,15 +1,11 @@
 #!/usr/bin/env python
 
-"""
-Setup script for DropTheBeat.
-"""
-
-from dtb import __project__, __version__, CLI, GUI
+"""Setup script for DropTheBeat."""
 
 import setuptools
 
-# Touch the README, it will be generated on release
-README = 'README.rst'
+from dtb import __project__, __version__, CLI, GUI
+
 import os
 if os.path.exists('README.rst'):
     README = open('README.rst').read()
@@ -23,7 +19,7 @@ setuptools.setup(
     version=__version__,
 
     description="Music sharing using Dropbox.",
-    url='http://github.com/jacebrowning/dropthebeat',
+    url='https://github.com/jacebrowning/dropthebeat',
     author='Jace Browning',
     author_email='jacebrowning@gmail.com',
 
@@ -49,5 +45,5 @@ setuptools.setup(
         'Topic :: Multimedia :: Sound/Audio',
     ],
 
-    install_requires=["PyYAML==3.10"],
+    install_requires=open('requirements.txt').readlines(),
 )

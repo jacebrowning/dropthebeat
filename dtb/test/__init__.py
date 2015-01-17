@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-
-"""
-Tests for the dtb package.
-"""
+"""Tests for the dtb package."""
 
 import os
 

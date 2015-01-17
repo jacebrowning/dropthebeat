@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-
-"""
-Settings for the DropTheBeat.
-"""
+"""Settings for the DropTheBeat."""
 
 import logging
 

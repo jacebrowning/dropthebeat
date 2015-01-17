@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-
-"""
-Classes and functions to interact with users.
-"""
+"""Classes and functions to interact with users."""
 
 import os
 import socket
@@ -16,6 +12,7 @@ from dtb.song import Song
 
 
 class User(object):
+
     """Represents a user directory."""
 
     PRIVATE = '.dtb'
@@ -42,6 +39,7 @@ class User(object):
     @staticmethod
     def new(root, name, downloads=None):
         """Create a new user in the share location.
+
         @param root: path to root of sharing directory
         @param name: name of user's sharing folder
         @param downloads: path to user's downloads directory
@@ -93,6 +91,7 @@ class User(object):
     @staticmethod
     def add(root, name, downloads=None):
         """Add the current computer's information to an existing user.
+
         @param root: path to root of sharing directory
         @param name: name of existing user's sharing folder
         @param downloads: path to user's downloads directory

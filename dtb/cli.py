@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-"""
-Command-line interface for DropTheBeat.
-"""
+"""Command-line interface for DropTheBeat."""
 
 import os
 import sys
@@ -17,8 +15,8 @@ from dtb import settings
 
 
 def main(args=None):
-    """Process command-line arguments and run the program.
-    """
+    """Process command-line arguments and run the program."""
+
     # Main parser
     parser = argparse.ArgumentParser(prog=CLI, description=__doc__, **SHARED)
     parser.add_argument('-g', '--gui', action='store_true',
@@ -90,6 +88,7 @@ def _configure_logging(verbosity=0):
 
 def _run(args, cwd, err):  # pylint: disable=W0613
     """Process arguments and run the main program.
+
     @param args: Namespace of CLI arguments
     @param cwd: current working directory
     @param err: function to call for CLI errors

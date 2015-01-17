@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-"""
-Graphical interface for DropTheBeat.
-"""
+"""Graphical interface for DropTheBeat."""
 
 import sys
 from unittest.mock import Mock
@@ -28,6 +26,7 @@ from dtb import settings
 
 
 class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable=R0901,R0904
+
     """Tkinter application for DropTheBeat."""
 
     def __init__(self, master=None, root=None, name=None):
@@ -222,8 +221,8 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
 
 
 def main(args=None):
-    """Process command-line arguments and run the program.
-    """
+    """Process command-line arguments and run the program."""
+
     # Main parser
     parser = argparse.ArgumentParser(prog=GUI, description=__doc__, **SHARED)
     # Hidden argument to override the root sharing directory path

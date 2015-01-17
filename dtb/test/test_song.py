@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-"""
-Unit tests for the dtb.song module.
-"""
+"""Unit tests for the dtb.song module."""
 
 import unittest
 from unittest.mock import patch, Mock

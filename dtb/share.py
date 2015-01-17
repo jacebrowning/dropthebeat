@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-
-"""
-Classes and functions to interact with sharing services.
-"""
+"""Classes and functions to interact with sharing services."""
 
 import os
 import getpass

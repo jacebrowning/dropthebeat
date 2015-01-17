@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-
-"""
-Common classes and functions.
-"""
+"""Common classes and functions."""
 
 import argparse
 import logging
@@ -11,14 +7,16 @@ from dtb import VERSION
 
 
 class HelpFormatter(argparse.HelpFormatter):
+
     """Command-line help text formatter with wider help text."""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, max_help_position=40, **kwargs)
 
 
 class WarningFormatter(logging.Formatter, object):
-    """Logging formatter that always displays a verbose logging
-    format for logging level WARNING or higher."""
+
+    """Displays verbose logging for level WARNING or higher."""
 
     def __init__(self, default_format, verbose_format, *args, **kwargs):
         super().__init__(*args, **kwargs)

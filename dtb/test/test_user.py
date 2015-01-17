@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
-"""
-Unit tests for the dtb.user module.
-"""
+"""Unit tests for the dtb.user module."""
 
 import unittest
 from unittest.mock import patch, Mock, call

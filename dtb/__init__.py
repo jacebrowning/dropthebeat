@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-
-"""
-Package for DropTheBeat.
-"""
+"""Package for DropTheBeat."""
 
 __project__ = 'DropTheBeat'
 __version__ = '0.0.6'

@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-
-"""
-Classes and functions to interact with songs.
-"""
+"""Classes and functions to interact with songs."""
 
 import os
 import shutil
@@ -13,6 +9,7 @@ import yaml
 
 
 class Song(object):
+
     """Represents a song file or link."""
 
     def __init__(self, path, downloads=None, friendname=None):
@@ -82,14 +79,14 @@ class Song(object):
         # Move the file or copy from the link
         try:
             if src == self.path:
-                logging.info("moving {}...".format(src, self.downloads))
+                logging.info("moving {}...".format(src))
                 # Copy then delete in case the operation is cancelled
                 shutil.copy(src, self.downloads)
                 dst = os.path.join(self.downloads, os.path.basename(src))
                 os.remove(src)
             else:
                 if os.path.exists(src):
-                    logging.info("copying {}...".format(src, self.downloads))
+                    logging.info("copying {}...".format(src))
                     shutil.copy(src, self.downloads)
                     dst = os.path.join(self.downloads, os.path.basename(src))
                     os.remove(self.path)

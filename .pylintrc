@@ -1,0 +1,21 @@
+[MESSAGES CONTROL]
+
+# I0011: Locally disabling %s
+# W0142: Used * or ** magic
+# W0511: TODO in comments
+# RO903: Too few public methods
+# R0904: Too many public methods
+# R0921: Abstract class not referenced
+disable=I0011,W0142,W0511,R0903,R0904,R0921,W1202,R0801
+
+[REPORTS]
+
+reports=no
+
+msg-template={msg_id}:{line:3d},{column}:{msg}
+
+[FORMAT]
+
+max-line-length=79
+
+ignore-long-lines=^.*((https?:)|(pragma:)|(TODO:)).*$
