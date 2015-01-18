@@ -207,7 +207,7 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
         # Cleanup outgoing songs
         self.user.cleanup()
         # Update outgoing songs list
-        logging.info("updating outoing songs...")
+        logging.info("updating outgoing songs...")
         self.outgoing = list(self.user.outgoing)
         self.listbox_outgoing.delete(0, tk.END)
         for song in self.outgoing:
