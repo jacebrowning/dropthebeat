@@ -1,0 +1,75 @@
+<h1 id="dropthebeat">DropTheBeat</h1>
+<p>Music sharing using Dropbox.</p>
+<p><a href="https://travis-ci.org/jacebrowning/dropthebeat"><img src="http://img.shields.io/travis/jacebrowning/dropthebeat/master.svg" alt="Build Status" /></a><br /><a href="https://coveralls.io/r/jacebrowning/dropthebeat"><img src="http://img.shields.io/coveralls/jacebrowning/dropthebeat/master.svg" alt="Coverage Status" /></a><br /><a href="https://scrutinizer-ci.com/g/jacebrowning/dropthebeat/?branch=master"><img src="http://img.shields.io/scrutinizer/g/jacebrowning/dropthebeat.svg" alt="Scrutinizer Code Quality" /></a><br /><a href="https://pypi.python.org/pypi/DropTheBeat"><img src="http://img.shields.io/pypi/v/DropTheBeat.svg" alt="PyPI Version" /></a><br /><a href="https://pypi.python.org/pypi/DropTheBeat"><img src="http://img.shields.io/pypi/dm/DropTheBeat.svg" alt="PyPI Downloads" /></a></p>
+<h2 id="features">Features</h2>
+<ul>
+<li>Recommend songs to friends</li>
+<li>Get a list of songs shared by friends</li>
+<li>Download the songs to your computer</li>
+</ul>
+<p><img src="https://raw.github.com/jacebrowning/dropthebeat/master/docs/screenshot.png" alt="screenshot" /></p>
+<h1 id="getting-started">Getting Started</h1>
+<h2 id="requirements">Requirements</h2>
+<ul>
+<li>Python 3.3+</li>
+</ul>
+<h2 id="installation">Installation</h2>
+<p>DropTheBeat can be installed with pip:</p>
+<pre><code>$ pip install DropTheBeat</code></pre>
+<p>or directly from the source code:</p>
+<pre><code>$ git clone https://github.com/jacebrowning/dropthebeat.git
+$ cd dropthebeat
+$ python setup.py install</code></pre>
+<h2 id="initial-setup">Initial Setup</h2>
+<ol>
+<li>Create a folder named 'DropTheBeat' in your Dropbox</li>
+<li>Share this folder with your friends</li>
+</ol>
+<h1 id="graphical-interface">Graphical Interface</h1>
+<p>Start the app:</p>
+<pre><code>$ DropTheBeat</code></pre>
+<h1 id="command-line-interface">Command-line Interface</h1>
+<p>Create your user folder:</p>
+<pre><code>$ dtb --new &lt;FirstLast&gt;</code></pre>
+<p>Recommend a song to friends:</p>
+<pre><code>$ dtb --share &lt;path/to/a/song&gt;
+$ dtb --share &lt;path/to/a/song&gt; --users JohnDoe JaneDoe</code></pre>
+<p>Display recommended songs:</p>
+<pre><code>$ dtb --incoming
+$ dtb --outoing</code></pre>
+<p>Download recommended songs:</p>
+<pre><code>$ dtb
+$ dtb --daemon</code></pre>
+<p>Launch the GUI:</p>
+<pre><code>$ dtb --gui</code></pre>
+<h1 id="for-contributors">For Contributors</h1>
+<h2 id="requirements-1">Requirements</h2>
+<ul>
+<li><p>Make:</p>
+<ul>
+<li>Windows: <a href="http://cygwin.com/install.html" class="uri">http://cygwin.com/install.html</a></li>
+<li>Mac: <a href="https://developer.apple.com/xcode" class="uri">https://developer.apple.com/xcode</a></li>
+<li>Linux: <a href="http://www.gnu.org/software/make" class="uri">http://www.gnu.org/software/make</a> (likely already installed)</li>
+</ul></li>
+<li>virtualenv: <a href="https://pypi.python.org/pypi/virtualenv#installation" class="uri">https://pypi.python.org/pypi/virtualenv#installation</a></li>
+<li>Pandoc: <a href="http://johnmacfarlane.net/pandoc/installing.html" class="uri">http://johnmacfarlane.net/pandoc/installing.html</a></li>
+<li><p>Graphviz: <a href="http://www.graphviz.org/Download.php" class="uri">http://www.graphviz.org/Download.php</a></p></li>
+</ul>
+<h2 id="installation-1">Installation</h2>
+<p>Create a virtualenv:</p>
+<pre><code>$ make env</code></pre>
+<p>Run the tests:</p>
+<pre><code>$ make test
+$ make tests  # includes integration tests</code></pre>
+<p>Build the documentation:</p>
+<pre><code>$ make doc</code></pre>
+<p>Run static analysis:</p>
+<pre><code>$ make pep8
+$ make pep257
+$ make pylint
+$ make check  # includes all checks</code></pre>
+<p>Prepare a release:</p>
+<pre><code>$ make dist  # dry run
+$ make upload</code></pre>
+<p>Launch the GUI:</p>
+<pre><code>$ make gui</code></pre>
