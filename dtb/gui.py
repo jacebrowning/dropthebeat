@@ -278,7 +278,7 @@ def run(args):
     else:  # pragma: no cover - manual test
 
         root = tk.Tk()
-        root.title("{} ({})".format(GUI, __version__))
+        root.title("{} (v{})".format(GUI, __version__))
         root.minsize(500, 500)
 
         # Map the Mac 'command' key to 'control'
