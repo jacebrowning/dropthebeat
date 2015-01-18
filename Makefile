@@ -54,11 +54,13 @@ PYREVERSE := $(BIN)/pyreverse
 NOSE := $(BIN)/nosetests
 PYTEST := $(BIN)/py.test
 COVERAGE := $(BIN)/coverage
+PYINSTALLER := $(BIN)/pyinstaller
 
 # Flags for PHONY targets
 DEPENDS_CI := $(ENV)/.depends-ci
 DEPENDS_DEV := $(ENV)/.depends-dev
 ALL := $(ENV)/.all
+EXE := dist/.exe
 
 # Main Targets ###############################################################
 
@@ -97,6 +99,7 @@ $(DEPENDS_CI): Makefile
 depends-dev: env Makefile $(DEPENDS_DEV)
 $(DEPENDS_DEV): Makefile
 	$(PIP) install --upgrade pep8radius pygments docutils pdoc wheel
+	$(PIP) install https://github.com/pyinstaller/pyinstaller/archive/python3.zip
 	touch $(DEPENDS_DEV)  # flag to indicate dependencies are installed
 
 # Documentation ##############################################################
@@ -191,7 +194,7 @@ clean-all: clean clean-env .clean-workspace
 
 .PHONY: .clean-dist
 .clean-dist:
-	rm -rf dist build
+	rm -rf *.spec dist build
 
 .PHONY: .clean-workspace
 .clean-workspace:
@@ -224,6 +227,13 @@ upload: .git-no-changes doc
 		echo Commit your changes and try again.;  \
 		exit -1;                                  \
 	fi;
+
+.PHONY: exe
+exe: depends-dev $(EXE)
+$(EXE): $(SOURCES)
+	$(PYINSTALLER) $(PACKAGE)/gui.py --noconfirm --clean --noupx \
+		--onefile --windowed --name=$(PROJECT)
+	touch $(EXE)  # flag to indicate the executable was built
 
 # System Installation ########################################################
 

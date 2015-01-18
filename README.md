@@ -107,6 +107,7 @@ Requirements
 * virtualenv: https://pypi.python.org/pypi/virtualenv#installation
 * Pandoc: http://johnmacfarlane.net/pandoc/installing.html
 * Graphviz: http://www.graphviz.org/Download.php
+* UPX: http://upx.sourceforge.net/#downloadupx
 
 Installation
 ------------
