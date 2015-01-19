@@ -99,7 +99,7 @@ $(DEPENDS_CI): Makefile
 depends-dev: env Makefile $(DEPENDS_DEV)
 $(DEPENDS_DEV): Makefile
 	$(PIP) install --upgrade pep8radius pygments docutils pdoc wheel
-	$(PIP) install https://github.com/pyinstaller/pyinstaller/archive/python3.zip
+	$(PIP) install https://github.com/matysek/pyinstaller/archive/python3.zip
 	touch $(DEPENDS_DEV)  # flag to indicate dependencies are installed
 
 # Documentation ##############################################################
