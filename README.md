@@ -1,7 +1,7 @@
 DropTheBeat
 ===========
 
-Music sharing using Dropbox.
+Recommend songs to your friends and download their shared files to your computer.
 
 [![Build Status](http://img.shields.io/travis/jacebrowning/dropthebeat/master.svg)](https://travis-ci.org/jacebrowning/dropthebeat)
 [![Coverage Status](http://img.shields.io/coveralls/jacebrowning/dropthebeat/master.svg)](https://coveralls.io/r/jacebrowning/dropthebeat)
@@ -12,8 +12,8 @@ Music sharing using Dropbox.
 Features
 --------
 
-* Recommend songs to friends
-* Get a list of songs shared by friends
+* Recommend songs to your friends
+* Get a list of songs shared by your friends
 * Download the songs to your computer
 
 ![screenshot](docs/assets/screenshot.png)
@@ -32,7 +32,7 @@ Installation
 DropTheBeat can be installed with pip:
 
 ```
-$ pip install DropTheBeat
+$ pip3 install DropTheBeat
 ```
 
 or directly from the source code:
@@ -40,7 +40,7 @@ or directly from the source code:
 ```
 $ git clone https://github.com/jacebrowning/dropthebeat.git
 $ cd dropthebeat
-$ python setup.py install
+$ python3 setup.py install
 ```
 
 Initial Setup
@@ -52,7 +52,7 @@ Initial Setup
 Graphical Interface
 ===================
 
-Start the app:
+Start the application:
 
 ```
 $ DropTheBeat
