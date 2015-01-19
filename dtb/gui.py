@@ -25,7 +25,7 @@ from dtb.common import SHARED, WarningFormatter
 from dtb import settings
 
 
-class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable=R0901,R0904
+class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable=R0901,R0902,R0904
 
     """Tkinter application for DropTheBeat."""
 
@@ -64,6 +64,7 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
                     break
 
         # Create variables
+        self.path_root = tk.StringVar(value=self.root)
         self.path_downloads = tk.StringVar(value=self.user.path_downloads)
         self.outgoing = []
         self.incoming = []
@@ -103,14 +104,17 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
 
             # Configure grid
             frame.rowconfigure(0, weight=1)
+            frame.rowconfigure(1, weight=1)
             frame.columnconfigure(0, weight=0)
             frame.columnconfigure(1, weight=1)
             frame.columnconfigure(2, weight=0)
 
             # Place widgets
-            ttk.Label(frame, text="Downloads:").grid(row=0, column=0, **kw_gp)
-            ttk.Entry(frame, state='readonly', textvariable=self.path_downloads).grid(row=0, column=1, **kw_gsp)
-            ttk.Button(frame, text="...", width=0, command=self.browse_downloads).grid(row=0, column=2, ipadx=5, **kw_gp)
+            ttk.Label(frame, text="Shared:").grid(row=0, column=0, sticky=tk.W, **kw_gp)
+            ttk.Entry(frame, state='readonly', textvariable=self.path_root).grid(row=0, column=1, columnspan=2, **kw_gsp)
+            ttk.Label(frame, text="Downloads:").grid(row=1, column=0, sticky=tk.W, **kw_gp)
+            ttk.Entry(frame, state='readonly', textvariable=self.path_downloads).grid(row=1, column=1, **kw_gsp)
+            ttk.Button(frame, text="...", width=0, command=self.browse_downloads).grid(row=1, column=2, ipadx=5, **kw_gp)
 
             return frame
 
