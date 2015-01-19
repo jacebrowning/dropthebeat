@@ -4,6 +4,8 @@
 
 set -x
 
+SCREENSHOT="assets/screenshot.png"
+
 ROOT="/Users/Browning/Dropbox/DropTheBeat"
 USER1="JohnDoe"
 USER2="JaneDoe"
@@ -24,6 +26,9 @@ dtb --root $ROOT --test $USER3 --share "$FILE1"
 dtb --root $ROOT --test $USER3 --share "$FILE2" --user $USER2
 dtb --root $ROOT --test $USER1 --share "$FILE3"
 
+echo "save a screenshot to: $SCREENSHOT"
 dtb --root $ROOT --test $USER3 --gui
 
 rm -r $ROOT
+
+mogrify -resize %50 $SCREENSHOT
