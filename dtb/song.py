@@ -67,7 +67,7 @@ class Song(object):
         filename = os.path.basename(self.source)
         return "{} (to {})".format(filename, self.friendname)
 
-    def download(self):
+    def download(self, catch=True):
         """Move the song to the user's download directory.
 
         @return: path to downloaded file or None on broken links
@@ -78,6 +78,9 @@ class Song(object):
         dst = None
         # Move the file or copy from the link
         try:
+            if not os.path.isdir(self.downloads):
+                msg = "invalid download location: {}".format(self.downloads)
+                raise IOError(msg)
             if src == self.path:
                 logging.info("moving {}...".format(src))
                 # Copy then delete in case the operation is cancelled
@@ -95,8 +98,9 @@ class Song(object):
                     logging.warning("broken link: {}".format(self.path))
                     os.remove(self.path)
         except IOError as error:
-            # TODO: these errors need to be left uncaught for the GUI
-            logging.warning(error)
+            logging.error(error)
+            if not catch:
+                raise
         return dst
 
     def ignore(self):

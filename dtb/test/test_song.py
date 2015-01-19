@@ -100,9 +100,21 @@ class TestSong(unittest.TestCase):  # pylint: disable=R0904
         mock_remove.assert_called_once_with(self.broken.path)
 
     @patch('os.remove', Mock(side_effect=IOError))
-    def test_download_error(self):
+    def test_download_error_caught(self):
         """Verify errors are caught while downloading."""
         self.song.download()
+
+    @patch('os.remove', Mock(side_effect=IOError))
+    def test_download_error_uncaught(self):
+        """Verify errors are not caught while downloading if requested."""
+        self.assertRaises(IOError, self.song.download, catch=False)
+
+    @patch('os.remove')
+    @patch('os.path.isdir', Mock(return_value=False))
+    def test_download_invalid_dest(self, mock_remove):
+        """Verify downloads are only attempted with a valid destination."""
+        self.song.download()
+        self.assertFalse(mock_remove.called)
 
     @patch('os.remove')
     def test_ignore(self, mock_remove):
