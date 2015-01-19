@@ -193,13 +193,19 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
     def do_ignore(self):
         """Ignore selected songs."""
         for index in (int(s) for s in self.listbox_incoming.curselection()):
-            self.incoming[index].ignore()
+            song = self.incoming[index]
+            song.ignore()
         self.update()
 
     def do_download(self):
-        """Download all songs."""
-        for index in (int(s) for s in self.listbox_incoming.curselection()):
-            self.incoming[index].download()
+        """Download selected songs."""
+        indicies = (int(s) for s in self.listbox_incoming.curselection())
+        try:
+            for index in indicies:
+                song = self.incoming[index]
+                song.download(catch=False)
+        except IOError as exc:
+            self.show_error_from_exception(exc, "Download Error")
         self.update()
 
     def update(self):
@@ -218,6 +224,12 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
         self.listbox_incoming.delete(0, tk.END)
         for song in self.incoming:
             self.listbox_incoming.insert(tk.END, song.in_string)
+
+    @staticmethod
+    def show_error_from_exception(exception, title="Error"):
+        """Convert an exception to an error dialog."""
+        message = str(exception).capitalize().replace(": ", ":\n\n")
+        messagebox.showerror(title, message)
 
 
 def main(args=None):
