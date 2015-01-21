@@ -1,10 +1,12 @@
 Changelog
 =========
 
-0.1 (dev)
----------
+0.1 (2015/01/20)
+----------------
 
-- Added scrollbars
+- Added the sharing location to the GUI
+- Added scrollbars to the GUI
+- Bug fixes
 
 0.0.6 (2014/01/25)
 ------------------

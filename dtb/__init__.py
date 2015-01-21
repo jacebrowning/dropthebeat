@@ -1,7 +1,7 @@
 """Package for DropTheBeat."""
 
 __project__ = 'DropTheBeat'
-__version__ = '0.1-dev'
+__version__ = '0.1'
 
 CLI = 'dtb'
 GUI = __project__

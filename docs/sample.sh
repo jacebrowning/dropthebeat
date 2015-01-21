@@ -27,7 +27,7 @@ dtb --root $ROOT --test "$USER3" --share "$FILE2" --user "$USER2"
 dtb --root $ROOT --test "$USER1" --share "$FILE3"
 
 echo
-echo "save a 0.5x screenshot to: $SCREENSHOT"
+echo "save a screenshot to: $SCREENSHOT"
 echo
 
 dtb --root $ROOT --test "$USER3" --gui
