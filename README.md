@@ -64,14 +64,14 @@ Command-line Interface
 Create your user folder:
 
 ```
-$ dtb --new <FirstLast>
+$ dtb --new <"First Last">
 ```
 
 Recommend a song to friends:
 
 ```
 $ dtb --share <path/to/a/song>
-$ dtb --share <path/to/a/song> --users JohnDoe JaneDoe
+$ dtb --share <path/to/a/song> --users "John Doe" "Jane Doe"
 ```
 
 Display recommended songs:

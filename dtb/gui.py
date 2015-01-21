@@ -43,7 +43,7 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
 
             while True:
 
-                msg = "Enter your name in the form 'FirstLast':"
+                msg = "Enter your name in the form 'First Last':"
                 text = simpledialog.askstring("Create a User", msg)
                 logging.debug("text: {}".format(repr(text)))
                 name = text.strip(" '") if text else None
@@ -244,7 +244,8 @@ def main(args=None):
     # Hidden argument to override the root sharing directory path
     parser.add_argument('--root', metavar="PATH", help=argparse.SUPPRESS)
     # Hidden argument to run the program as a different user
-    parser.add_argument('--test', metavar='FirstLast', help=argparse.SUPPRESS)
+    parser.add_argument('--test', metavar='"First Last"',
+                        help=argparse.SUPPRESS)
 
     # Parse arguments
     args = parser.parse_args(args=args)

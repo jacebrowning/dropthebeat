@@ -34,14 +34,15 @@ def main(args=None):
                         help="display the outgoing songs")
     parser.add_argument('-u', '--users', metavar='n', nargs='*',
                         help="filter to the specified usernames")
-    parser.add_argument('-n', '--new', metavar='FirstLast',
+    parser.add_argument('-n', '--new', metavar='"First Last"',
                         help="create a new user")
     parser.add_argument('-x', '--delete', action='store_true',
                         help="delete the current user")
     # Hidden argument to override the root sharing directory path
     parser.add_argument('--root', metavar="PATH", help=argparse.SUPPRESS)
     # Hidden argument to run the program as a different user
-    parser.add_argument('--test', metavar='FirstLast', help=argparse.SUPPRESS)
+    parser.add_argument('--test', metavar='"First Last"',
+                        help=argparse.SUPPRESS)
 
     # Parse arguments
     args = parser.parse_args(args=args)
