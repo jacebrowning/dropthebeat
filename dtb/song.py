@@ -30,7 +30,7 @@ class Song(object):
         path = os.path.join(dirpath, filename)
         logging.info("creating link {}...".format(path))
         with open(path, 'w') as link:
-            data = {'link': relpath.replace('\\', '/')}  # always unix-style
+            data = {'link': relpath.replace('\\', '/')}  # always *nix format
             link.write(yaml.dump(data, default_flow_style=False))
 
     @property
@@ -83,7 +83,7 @@ class Song(object):
                 raise IOError(msg)
             if src == self.path:
                 logging.info("moving {}...".format(src))
-                # Copy then delete in case the operation is cancelled
+                # Copy then delete in case the operation is canceled
                 shutil.copy(src, self.downloads)
                 dst = os.path.join(self.downloads, os.path.basename(src))
                 os.remove(src)

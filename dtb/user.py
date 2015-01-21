@@ -285,7 +285,7 @@ class User(object):
     def cleanup(self):
         """Delete invalid users, unlinked songs, and empty directories."""
         logging.info("cleaning up {}...".format(self.root))
-        # Delete unliked songs
+        # Delete unlinked songs
         paths = [os.path.join(self.path_drops, name)
                  for name in os.listdir(self.path_drops)]
         for song in self.outgoing:

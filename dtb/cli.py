@@ -53,10 +53,10 @@ def main(args=None):
     try:
         success = _run(args, os.getcwd(), parser.error)
     except KeyboardInterrupt:
-        logging.debug("command cancelled")
+        logging.debug("command canceled")
     else:
         if success:
-            logging.debug("command succedded")
+            logging.debug("command succeeded")
         else:
             logging.debug("command failed")
             sys.exit(1)
@@ -118,7 +118,7 @@ def _run(args, cwd, err):  # pylint: disable=W0613
         print("deleted: {}".format(this))
         return True
 
-    # Display incoming, share a song, and/or display outoing and exit
+    # Display incoming, share a song, and/or display outgoing and exit
     if any((args.incoming, args.share, args.outgoing)):
 
         if args.incoming:
