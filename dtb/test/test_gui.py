@@ -49,7 +49,7 @@ class TestLogging(unittest.TestCase):  # pylint: disable=R0904
     """Unit tests for logging levels."""
 
     def test_verbose_0(self):
-        """Verify verbose level 1 can be set."""
+        """Verify verbose level 0 can be set."""
         self.assertIs(None, gui.main([]))
 
     def test_verbose_1(self):
