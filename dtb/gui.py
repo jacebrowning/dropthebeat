@@ -128,11 +128,9 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
             # Place widgets
             self.listbox_incoming = tk.Listbox(frame, selectmode=tk.EXTENDED if mac else tk.MULTIPLE)
             self.listbox_incoming.grid(row=0, column=0, columnspan=3, **kw_gsp)
-
             scroll_incoming = ttk.Scrollbar(frame, orient=tk.VERTICAL, command=self.listbox_incoming.yview)
             self.listbox_incoming.configure(yscrollcommand=scroll_incoming.set)
             scroll_incoming.grid(row=0, column=2, sticky=(tk.N, tk.E, tk.S))
-
             ttk.Button(frame, text="\u21BB", width=0, command=self.update).grid(row=1, column=0, sticky=tk.SW, ipadx=5, **kw_gp)
             ttk.Button(frame, text="Ignore Selected", command=self.do_ignore).grid(row=1, column=1, sticky=tk.SW, ipadx=5, **kw_gp)
             ttk.Button(frame, text="Download Selected", command=self.do_download).grid(row=1, column=2, sticky=tk.SE, ipadx=5, **kw_gp)
@@ -155,7 +153,6 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
             scroll_outgoing = ttk.Scrollbar(frame, orient=tk.VERTICAL, command=self.listbox_outgoing.yview)
             self.listbox_outgoing.configure(yscrollcommand=scroll_outgoing.set)
             scroll_outgoing.grid(row=0, column=2, sticky=(tk.N, tk.E, tk.S))
-
             ttk.Button(frame, text="\u21BB", width=0, command=self.update).grid(row=1, column=0, sticky=tk.SW, ipadx=5, **kw_gp)
             ttk.Button(frame, text="Remove Selected", command=self.do_remove).grid(row=1, column=1, sticky=tk.SW, ipadx=5, **kw_gp)
             ttk.Button(frame, text="Share Songs...", command=self.do_share).grid(row=1, column=2, sticky=tk.SE, ipadx=5, **kw_gp)
@@ -213,8 +210,10 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
 
     def update(self):
         """Update the list of outgoing and incoming songs."""
+
         # Cleanup outgoing songs
         self.user.cleanup()
+
         # Update outgoing songs list
         logging.info("updating outgoing songs...")
         self.outgoing = list(self.user.outgoing)
@@ -222,6 +221,7 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
         for song in self.outgoing:
             self.listbox_outgoing.insert(tk.END, song.out_string)
         # Update incoming songs list
+
         logging.info("updating incoming songs...")
         self.incoming = list(self.user.incoming)
         self.listbox_incoming.delete(0, tk.END)
