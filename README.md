@@ -16,7 +16,7 @@ Features
 * Get a list of songs shared by your friends
 * Download the songs to your computer
 
-![screenshot](docs/assets/screenshot.png)
+![screenshot](https://github.com/jacebrowning/dropthebeat/blob/master/docs/assets/screenshot.png)
 
 Getting Started
 ===============
