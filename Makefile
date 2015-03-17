@@ -99,7 +99,6 @@ $(DEPENDS_CI): Makefile
 depends-dev: env Makefile $(DEPENDS_DEV)
 $(DEPENDS_DEV): Makefile
 	$(PIP) install --upgrade pep8radius pygments docutils pdoc wheel
-	$(PIP) install https://github.com/matysek/pyinstaller/archive/python3.zip
 	touch $(DEPENDS_DEV)  # flag to indicate dependencies are installed
 
 # Documentation ##############################################################
@@ -231,8 +230,10 @@ upload: .git-no-changes doc
 .PHONY: exe
 exe: depends-dev $(EXE)
 $(EXE): $(SOURCES)
-	$(PYINSTALLER) $(PACKAGE)/gui.py --noconfirm --clean --noupx \
-		--onefile --windowed --name=$(PROJECT)
+	- $(SYS_PYTHON) -m pip uninstall pyinstaller --yes
+	$(SYS_PYTHON) -m pip install https://github.com/matysek/pyinstaller/archive/python3.zip
+	$(SYS_PYTHON) -m pip install --upgrade matplotlib
+	pyinstaller $(PACKAGE)/gui.py --noconfirm --clean --noupx --name=$(PROJECT)
 	touch $(EXE)  # flag to indicate the executable was built
 
 # System Installation ########################################################

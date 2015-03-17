@@ -5,6 +5,7 @@
 import sys
 from unittest.mock import Mock
 try:  # pragma: no cover - not measurable
+    import matplotlib
     import tkinter as tk
     from tkinter import ttk
     from tkinter import messagebox, simpledialog, filedialog
