@@ -59,6 +59,7 @@ COVERAGE := $(BIN)/coverage
 DEPENDS_CI := $(ENV)/.depends-ci
 DEPENDS_DEV := $(ENV)/.depends-dev
 ALL := $(ENV)/.all
+EXE := gui.dist/$(PROJECT).exe
 
 # Main Targets ###############################################################
 
@@ -97,6 +98,7 @@ $(DEPENDS_CI): Makefile
 depends-dev: env Makefile $(DEPENDS_DEV)
 $(DEPENDS_DEV): Makefile
 	$(PIP) install --upgrade pep8radius pygments docutils pdoc wheel
+	$(SYS_PYTHON) -m pip install --upgrade nuitka
 	touch $(DEPENDS_DEV)  # flag to indicate dependencies are installed
 
 # Documentation ##############################################################
@@ -191,7 +193,7 @@ clean-all: clean clean-env .clean-workspace
 
 .PHONY: .clean-dist
 .clean-dist:
-	rm -rf dist build
+	rm -rf dist build *.dist *.build *.zip
 
 .PHONY: .clean-workspace
 .clean-workspace:
@@ -224,6 +226,13 @@ upload: .git-no-changes doc
 		echo Commit your changes and try again.;  \
 		exit -1;                                  \
 	fi;
+
+.PHONY: exe
+exe: depends-dev $(EXE)
+$(EXE): $(SOURCES)
+	nuitka --standalone --recurse-all $(PACKAGE)/gui.py
+	cd gui.dist && mv gui.exe $(PROJECT).exe
+	cp -r gui.dist $(PROJECT) && zip -r $(PROJECT).zip $(PROJECT) && rm -rf $(PROJECT)
 
 # System Installation ########################################################
 

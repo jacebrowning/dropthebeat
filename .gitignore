@@ -31,6 +31,9 @@ pyunit.xml
 # Build and release directories
 build
 dist
+*.build
+*.dist
+*.zip
 
 # Sublime Text
 *.sublime-workspace
