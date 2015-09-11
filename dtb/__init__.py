@@ -3,11 +3,11 @@
 import sys
 
 __project__ = 'DropTheBeat'
-__version__ = '0.2-dev'
+__version__ = '0.2dev'
 
 CLI = 'dtb'
 GUI = __project__
-VERSION = __project__ + '-' + __version__
+VERSION = "{0} v{1}".format(__project__, __version__)
 
 PYTHON_VERSION = 3, 3
 

@@ -1,4 +1,4 @@
-"""Tests for the dtb package."""
+"""Unit tests for the package."""
 
 import os
 
