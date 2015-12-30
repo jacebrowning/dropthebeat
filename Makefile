@@ -5,7 +5,7 @@ SOURCES := Makefile setup.py $(shell find $(PACKAGE) -name '*.py')
 
 # Python settings
 PYTHON_MAJOR ?= 3
-PYTHON_MINOR ?= 3
+PYTHON_MINOR ?= 5
 
 # Test settings
 UNIT_TEST_COVERAGE := 85
@@ -172,10 +172,10 @@ pep8: depends-ci
 
 .PHONY: pep257
 pep257: depends-ci
-# D102: docstring missing (checked by PyLint)
+# D10*: docstring missing (checked by PyLint)
 # D202: No blank lines allowed *after* function docstring (personal preference)
 # D203: 1 blank line required before class (deprecated warning)
-	$(PEP257) $(PACKAGE) tests --ignore=D102,D202,D203
+	$(PEP257) $(PACKAGE) tests --add-ignore=D102,D105,D202,D203
 
 .PHONY: pylint
 pylint: depends-ci

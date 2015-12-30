@@ -12,7 +12,6 @@ from dtb.song import Song
 
 
 class User(object):
-
     """Represents a user directory."""
 
     PRIVATE = '.dtb'
@@ -34,7 +33,7 @@ class User(object):
         return self.path == other.path
 
     def __ne__(self, other):
-        return not self == other
+        return self.path != other.path
 
     @staticmethod
     def new(root, name, downloads=None):
@@ -51,11 +50,14 @@ class User(object):
         if os.path.exists(path):
             raise EnvironmentError("user already exists: {}".format(path))
         downloads = downloads or os.path.expanduser('~/Downloads')
+
         # Create a new user
         user = User(path, _check=False)
+
         # Create directories
         os.makedirs(user.path_private)
         os.makedirs(user.path_drops)
+
         # Create info
         info = get_info()
         data = [{'computer': info[0],
@@ -65,24 +67,26 @@ class User(object):
         logging.debug("saving {}...".format(user.path_info))
         with open(user.path_info, 'w') as outfile:
             outfile.write(text)
+
         # Create settings
-        data = {}
-        text = yaml.dump(data, default_flow_style=False)
+        text = yaml.dump({}, default_flow_style=False)
         logging.debug("saving {}...".format(user.path_settings))
         with open(user.path_settings, 'w') as outfile:
             outfile.write(text)
+
         # Create requests
-        data = []
-        text = yaml.dump(data, default_flow_style=False)
+        text = yaml.dump([], default_flow_style=False)
         logging.debug("saving {}...".format(user.path_requests))
         with open(user.path_requests, 'w') as outfile:
             outfile.write(text)
+
         # Create folders for friends
         for name in os.listdir(root):
             friendpath = os.path.join(root, name)
             if name != user.name and os.path.isdir(friendpath):
                 User._makedir(os.path.join(user.path, name))
                 User._makedir(os.path.join(friendpath, user.name))
+
         # Return the new user
         logging.info("created user: {}".format(user))
         user.check()

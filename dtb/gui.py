@@ -26,7 +26,6 @@ from dtb import settings
 
 
 class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable=R0901,R0902,R0904
-
     """Tkinter application for DropTheBeat."""
 
     def __init__(self, master=None, root=None, name=None):

@@ -9,7 +9,6 @@ import yaml
 
 
 class Song(object):
-
     """Represents a song file or link."""
 
     def __init__(self, path, downloads=None, friendname=None):

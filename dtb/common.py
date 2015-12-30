@@ -7,7 +7,6 @@ from dtb import VERSION
 
 
 class HelpFormatter(argparse.HelpFormatter):
-
     """Command-line help text formatter with wider help text."""
 
     def __init__(self, *args, **kwargs):
@@ -15,7 +14,6 @@ class HelpFormatter(argparse.HelpFormatter):
 
 
 class WarningFormatter(logging.Formatter, object):
-
     """Displays verbose logging for level WARNING or higher."""
 
     def __init__(self, default_format, verbose_format, *args, **kwargs):
