@@ -22,7 +22,7 @@ class TestFunctions(unittest.TestCase):  # pylint: disable=R0904
         temp = tempfile.mkdtemp()
         os.makedirs(os.path.join(temp, 'Dropbox', 'DropTheBeat'))
         try:
-            path = share.find(top=temp)
+            path = share.find(temp)
             self.assertTrue(os.path.isdir(path))
         finally:
             shutil.rmtree(temp)
@@ -32,7 +32,7 @@ class TestFunctions(unittest.TestCase):  # pylint: disable=R0904
         temp = tempfile.mkdtemp()
         os.makedirs(os.path.join(temp, 'Dropbox (Personal)', 'DropTheBeat'))
         try:
-            path = share.find(top=temp)
+            path = share.find(temp)
             self.assertTrue(os.path.isdir(path))
         finally:
             shutil.rmtree(temp)
@@ -43,7 +43,7 @@ class TestFunctions(unittest.TestCase):  # pylint: disable=R0904
         temp = tempfile.mkdtemp()
         os.makedirs(os.path.join(temp, 'Dropbox', 'a', 'b', 'DropTheBeat'))
         try:
-            self.assertRaises(OSError, share.find, top=temp)
+            self.assertRaises(OSError, share.find, temp)
         finally:
             shutil.rmtree(temp)
 
