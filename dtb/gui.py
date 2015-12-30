@@ -28,11 +28,11 @@ from dtb import settings
 class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable=R0901,R0902,R0904
     """Tkinter application for DropTheBeat."""
 
-    def __init__(self, master=None, root=None, name=None):
+    def __init__(self, master=None, root=None, home=None, name=None):
         ttk.Frame.__init__(self, master)
 
         # Load the root sharing directory
-        self.root = root or share.find()
+        self.root = root or share.find(home)
 
         # Load the user
         self.user = user.User(os.path.join(self.root, name)) if name else None
@@ -249,6 +249,7 @@ def main(args=None):
 
     # Main parser
     parser = argparse.ArgumentParser(prog=GUI, description=__doc__, **SHARED)
+    parser.add_argument('--home', metavar='PATH', help="path to home directory")
     # Hidden argument to override the root sharing directory path
     parser.add_argument('--root', metavar="PATH", help=argparse.SUPPRESS)
     # Hidden argument to run the program as a different user
@@ -315,7 +316,8 @@ def run(args):
         root.withdraw()
 
         # Start the application
-        app = Application(master=root, root=args.root, name=args.test)
+        app = Application(master=root, home=args.home,
+                          root=args.root, name=args.test)
         app.mainloop()
 
         return True

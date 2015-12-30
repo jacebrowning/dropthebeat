@@ -1,17 +1,17 @@
 Changelog
 =========
 
-0.2 (dev)
----------
+0.2 (unreleased)
+----------------
 
-- TBD
+- Added a `--home` option to specify a custom home directory.
 
 0.1 (2015/01/20)
 ----------------
 
-- Added the sharing location to the GUI
-- Added scrollbars to the GUI
-- Bug fixes
+- Added the sharing location to the GUI.
+- Added scrollbars to the GUI.
+- Fixed additional bugs.
 
 0.0.6 (2014/01/25)
 ------------------
@@ -26,7 +26,7 @@ Changelog
 0.0.4 (2013/12/06)
 ------------------
 
--  With the CLI dtb.log is created with the downloads.
+-  With the CLI, `dtb.log` is created with the downloads.
 
 0.0.3 (2013/11/26)
 ------------------

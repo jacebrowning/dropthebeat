@@ -1,14 +1,9 @@
 """Classes and functions to interact with sharing services."""
 
 import os
-import getpass
 import logging
 
-ROOTS = (
-    r"C:\Users",
-    r"/Users",
-    r"/home",
-)
+
 SERVICES = (
     'Dropbox',
     'Dropbox (Personal)',
@@ -17,15 +12,15 @@ SHARE = 'DropTheBeat'
 SHARE_DEPTH = 3  # number of levels to search for share directory
 
 
-def find(top=None):
+def find(home=None):
     """Return the path to a sharing location."""
 
-    top = top or _default_top()
+    home = home or os.path.expanduser("~")
 
-    logging.debug("looking for service in {}...".format(top))
-    for directory in os.listdir(top):
+    logging.debug("looking for service in {}...".format(home))
+    for directory in os.listdir(home):
         if directory in SERVICES:
-            service = os.path.join(top, directory)
+            service = os.path.join(home, directory)
             logging.debug("found service: {}".format(service))
             logging.debug("looking for '{}' in {}...".format(SHARE, service))
             for dirpath, dirnames, _, in os.walk(service):
@@ -40,17 +35,3 @@ def find(top=None):
                     return path
 
     raise EnvironmentError("no '{}' folder found".format(SHARE))
-
-
-def _default_top():
-    """Return the default search path."""
-
-    username = getpass.getuser()
-    logging.debug("looking for home...")
-    for root in ROOTS:
-        path = os.path.join(root, username)
-        if os.path.isdir(path):  # pragma: no cover - manual test
-            logging.debug("found home: {}".format(path))
-            return path
-
-    raise EnvironmentError("no home found for '{}'".format(username))
