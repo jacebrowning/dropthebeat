@@ -40,6 +40,8 @@ def main(args=None):
                         help="delete the current user")
     # Hidden argument to override the root sharing directory path
     parser.add_argument('--root', metavar="PATH", help=argparse.SUPPRESS)
+    # Hidden argument to override the home directory
+    parser.add_argument('--home', metavar='PATH', help=argparse.SUPPRESS)
     # Hidden argument to run the program as a different user
     parser.add_argument('--test', metavar='"First Last"',
                         help=argparse.SUPPRESS)
@@ -179,5 +181,5 @@ def _loop(this, daemon, log):
     return True
 
 
-if __name__ == '__main__':  # pragma: no cover, manual test
+if __name__ == '__main__':  # pragma: no cover (manual test)
     main()

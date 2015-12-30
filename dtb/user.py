@@ -339,7 +339,7 @@ class User(object):
                 song.link(os.path.join(friend.path, self.name))
         return song
 
-    def request(self, song):  # pragma: no cover - not implemented
+    def request(self, song):
         """Request a new song."""
         raise NotImplementedError("TODO: implement song requests")
 
@@ -355,7 +355,7 @@ class User(object):
             if not os.path.isfile(path):
                 raise ValueError("missing file: {}".format(path))
 
-    def delete(self):  # pragma: no cover - not implemented
+    def delete(self):
         """Delete the user."""
         for friend in self.friends:
             path = os.path.join(friend.path, self.name)

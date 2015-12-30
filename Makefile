@@ -10,9 +10,9 @@ ifndef TRAVIS
 endif
 
 # Test settings
-UNIT_TEST_COVERAGE := 85
+UNIT_TEST_COVERAGE := 68
 INTEGRATION_TEST_COVERAGE := 0
-COMBINED_TEST_COVERAGE := 99
+COMBINED_TEST_COVERAGE := 90
 
 # System paths
 PLATFORM := $(shell python -c 'import sys; print(sys.platform)')

@@ -151,7 +151,7 @@ class TestCLI(unittest.TestCase):  # pylint: disable=R0904
         # Delete user
         self.dtb('--delete')
 
-    @patch('dtb.gui.run', Mock(return_value=True))
+    @patch('dtb.gui._LAUNCH', False)
     def test_launch_gui(self):
         """Verify the GUI can be launched."""
         self.log("launching the GUI")

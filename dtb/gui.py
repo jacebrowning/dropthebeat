@@ -4,28 +4,29 @@
 
 import sys
 from unittest.mock import Mock
-try:  # pragma: no cover - not measurable
+try:
     import tkinter as tk
     from tkinter import ttk
     from tkinter import messagebox, simpledialog, filedialog
-except ImportError as err:  # pragma: no cover - not measurable
+except ImportError as err:
     sys.stderr.write("WARNING: {}\n".format(err))
-    tk = Mock()  # pylint: disable=C0103
-    ttk = Mock()  # pylint: disable=C0103
+    tk = Mock()
+    ttk = Mock()
 
 import os
 import argparse
 from itertools import chain
 import logging
 
-
 from dtb import GUI, __version__
 from dtb import share, user
 from dtb.common import SHARED, WarningFormatter
 from dtb import settings
 
+_LAUNCH = True
 
-class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable=R0901,R0902,R0904
+
+class Application(ttk.Frame):  # pylint: disable=too-many-instance-attributes
     """Tkinter application for DropTheBeat."""
 
     def __init__(self, master=None, root=None, home=None, name=None):
@@ -78,8 +79,10 @@ class Application(ttk.Frame):  # pragma: no cover - manual test, pylint: disable
         master.deiconify()
         self.update()
 
-    def init(self, root):  # pylint: disable=R0914
-        """Initialize frames and widgets."""  # pylint: disable=C0301
+    def init(self, root):
+        """Initialize frames and widgets."""
+
+        # pylint: disable=line-too-long
 
         mac = sys.platform == 'darwin'
 
@@ -301,7 +304,7 @@ def run(args):
         logging.error("tkinter is not available")
         return False
 
-    else:  # pragma: no cover - manual test
+    else:
 
         root = tk.Tk()
         root.title("{} (v{})".format(GUI, __version__))
@@ -318,10 +321,11 @@ def run(args):
         # Start the application
         app = Application(master=root, home=args.home,
                           root=args.root, name=args.test)
-        app.mainloop()
+        if _LAUNCH:
+            app.mainloop()
 
         return True
 
 
-if __name__ == '__main__':  # pragma: no cover - manual test
+if __name__ == '__main__':  # pragma: no cover (manual test)
     main()
