@@ -32,7 +32,7 @@ Installation
 DropTheBeat can be installed with pip:
 
 ```
-$ pip3 install DropTheBeat
+$ pip install DropTheBeat
 ```
 
 or directly from the source code:
@@ -40,7 +40,7 @@ or directly from the source code:
 ```
 $ git clone https://github.com/jacebrowning/dropthebeat.git
 $ cd dropthebeat
-$ python3 setup.py install
+$ python setup.py install
 ```
 
 Initial Setup
@@ -93,4 +93,3 @@ Launch the GUI:
 ```
 $ dtb --gui
 ```
-

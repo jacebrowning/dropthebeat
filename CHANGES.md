@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.2 (unreleased)
+0.2 (2015/12/30)
 ----------------
 
 - Added a `--home` option to specify a custom home directory.
