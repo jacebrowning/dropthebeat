@@ -222,6 +222,18 @@ mkdocs-live: mkdocs ## Launch and continuously rebuild the mkdocs site
 	eval "sleep 3; open http://127.0.0.1:8000" &
 	$(MKDOCS) serve
 
+# BUILD ########################################################################
+
+PYINSTALLER := $(BIN_)pyinstaller
+PYINSTALLER_MAKESPEC := $(BIN_)pyi-makespec
+
+.PHONY: exe
+exe: depends $(PROJECT).spec
+	$(PYINSTALLER) $(PROJECT).spec --noconfirm --clean
+
+$(PROJECT).spec:
+	$(PYINSTALLER_MAKESPEC) $(PACKAGE)/gui.py --noupx --onefile --windowed --name=$(PROJECT)
+
 # RELEASE ######################################################################
 
 .PHONY: register-test
@@ -283,7 +295,7 @@ clean-all: clean .clean-env .clean-workspace
 
 .PHONY: .clean-dist
 .clean-dist:
-	rm -rf dist build
+	rm -rf *.spec dist build
 
 .PHONY: .clean-env
 .clean-env: clean
