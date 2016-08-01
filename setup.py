@@ -37,7 +37,7 @@ setuptools.setup(
         'Environment :: Win32 (MS Windows)',
         'Environment :: X11 Applications',
         'Intended Audience :: End Users/Desktop',
-        'License :: OSI Approved :: MIT License',  
+        'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3',

@@ -3,6 +3,7 @@
 ## 0.3 (unreleased)
 
 - Switched license to MIT.
+- Added Windows support.
 
 ## 0.2.1 (2015/12/30)
 

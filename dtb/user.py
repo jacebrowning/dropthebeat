@@ -368,7 +368,7 @@ class User(object):
 
 def get_info():
     """Return the current computer name and user name."""
-    return socket.gethostname(), getpass.getuser()
+    return socket.gethostname(), getpass.getuser()  # pylint: disable=no-member
 
 
 def get_current(root):
