@@ -10,7 +10,7 @@ Recommend songs to your friends and download their shared files to your computer
 * Get a list of songs shared by your friends
 * Download the songs to your computer
 
-![screenshot](https://github.com/jacebrowning/dropthebeat/blob/master/docs/assets/screenshot.png)
+![screenshot](https://raw.githubusercontent.com/jacebrowning/dropthebeat/master/docs/assets/screenshot.png)
 
 # Setup
 
