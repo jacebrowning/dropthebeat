@@ -1,6 +1,6 @@
 # Revision History
 
-## 0.3 (unreleased)
+## 1.0 (2016/08/01)
 
 - Switched license to MIT.
 - Added Windows support.
