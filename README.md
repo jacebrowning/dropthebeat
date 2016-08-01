@@ -1,8 +1,4 @@
-[![Build Status](http://img.shields.io/travis/jacebrowning/dropthebeat/master.svg)](https://travis-ci.org/jacebrowning/dropthebeat)
-[![Coverage Status](http://img.shields.io/coveralls/jacebrowning/dropthebeat/master.svg)](https://coveralls.io/r/jacebrowning/dropthebeat)
-[![Scrutinizer Code Quality](http://img.shields.io/scrutinizer/g/jacebrowning/dropthebeat.svg)](https://scrutinizer-ci.com/g/jacebrowning/dropthebeat/?branch=master)
-[![PyPI Version](http://img.shields.io/pypi/v/DropTheBeat.svg)](https://pypi.python.org/pypi/DropTheBeat)
-[![PyPI Downloads](http://img.shields.io/pypi/dm/DropTheBeat.svg)](https://pypi.python.org/pypi/DropTheBeat)
+Unix: [![Unix Build Status](http://img.shields.io/travis/jacebrowning/dropthebeat/develop.svg)](https://travis-ci.org/jacebrowning/dropthebeat) Windows: [![Windows Build Status](https://img.shields.io/appveyor/ci/jacebrowning/dropthebeat/develop.svg)](https://ci.appveyor.com/project/jacebrowning/dropthebeat)<br>Metrics: [![Coverage Status](http://img.shields.io/coveralls/jacebrowning/dropthebeat/develop.svg)](https://coveralls.io/r/jacebrowning/dropthebeat) [![Scrutinizer Code Quality](http://img.shields.io/scrutinizer/g/jacebrowning/dropthebeat.svg)](https://scrutinizer-ci.com/g/jacebrowning/dropthebeat/?branch=develop)<br>Usage: [![PyPI Version](http://img.shields.io/pypi/v/DropTheBeat.svg)](https://pypi.python.org/pypi/DropTheBeat) [![PyPI Downloads](http://img.shields.io/pypi/dm/DropTheBeat.svg)](https://pypi.python.org/pypi/DropTheBeat)
 
 # Overview
 
