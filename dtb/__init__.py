@@ -3,7 +3,7 @@
 import sys
 
 __project__ = 'DropTheBeat'
-__version__ = '0.2.1'
+__version__ = '1.0'
 
 CLI = 'dtb'
 GUI = __project__
