@@ -12,7 +12,7 @@ import logging
 
 from dtb import gui
 
-from dtb.test import ENV, REASON
+from dtb.tests import ENV, REASON
 
 if __name__ == '__main__':
     os.environ[ENV] = '1'

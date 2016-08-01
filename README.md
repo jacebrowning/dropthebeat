@@ -1,16 +1,14 @@
-DropTheBeat
-===========
-
-Recommend songs to your friends and download their shared files to your computer.
-
 [![Build Status](http://img.shields.io/travis/jacebrowning/dropthebeat/master.svg)](https://travis-ci.org/jacebrowning/dropthebeat)
 [![Coverage Status](http://img.shields.io/coveralls/jacebrowning/dropthebeat/master.svg)](https://coveralls.io/r/jacebrowning/dropthebeat)
 [![Scrutinizer Code Quality](http://img.shields.io/scrutinizer/g/jacebrowning/dropthebeat.svg)](https://scrutinizer-ci.com/g/jacebrowning/dropthebeat/?branch=master)
 [![PyPI Version](http://img.shields.io/pypi/v/DropTheBeat.svg)](https://pypi.python.org/pypi/DropTheBeat)
 [![PyPI Downloads](http://img.shields.io/pypi/dm/DropTheBeat.svg)](https://pypi.python.org/pypi/DropTheBeat)
 
-Features
---------
+# Overview
+
+Recommend songs to your friends and download their shared files to your computer.
+
+## Features
 
 * Recommend songs to your friends
 * Get a list of songs shared by your friends
@@ -18,18 +16,15 @@ Features
 
 ![screenshot](https://github.com/jacebrowning/dropthebeat/blob/master/docs/assets/screenshot.png)
 
-Getting Started
-===============
+# Setup
 
-Requirements
-------------
+## Requirements
 
 * Python 3.3+
 
-Installation
-------------
+## Installation
 
-DropTheBeat can be installed with pip:
+Install DropTheBeat with pip:
 
 ```
 $ pip install DropTheBeat
@@ -43,14 +38,14 @@ $ cd dropthebeat
 $ python setup.py install
 ```
 
-Initial Setup
--------------
+## Configuration
 
 1. Create a folder named 'DropTheBeat' in your Dropbox
 2. Share this folder with your friends
 
-Graphical Interface
-===================
+# Usage
+
+## Graphical Interface
 
 Start the application:
 
@@ -58,8 +53,7 @@ Start the application:
 $ DropTheBeat
 ```
 
-Command-line Interface
-======================
+## Command-line Interface
 
 Create your user folder:
 

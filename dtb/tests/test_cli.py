@@ -14,7 +14,7 @@ import yaml
 
 from dtb.cli import main
 
-from dtb.test import ENV, REASON, FAKESONG
+from dtb.tests import ENV, REASON, FAKESONG
 
 if __name__ == '__main__':
     os.environ[ENV] = '1'
