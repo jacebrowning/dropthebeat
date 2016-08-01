@@ -1,7 +1,9 @@
 # Project settings
 PROJECT := DropTheBeat
 PACKAGE := dtb
-SOURCES := Makefile setup.py $(shell find $(PACKAGE) -name '*.py')
+REPOSITORY := jacebrowning/dropthebeat
+DIRECTORIES := $(PACKAGE) tests
+FILES := setup.py $(shell find $(DIRECTORIES) -name '*.py')
 
 # Python settings
 ifndef TRAVIS
@@ -9,40 +11,35 @@ ifndef TRAVIS
 	PYTHON_MINOR ?= 5
 endif
 
-# Test settings
-UNIT_TEST_COVERAGE := 68
-INTEGRATION_TEST_COVERAGE := 0
-COMBINED_TEST_COVERAGE := 90
-
 # System paths
 PLATFORM := $(shell python -c 'import sys; print(sys.platform)')
 ifneq ($(findstring win32, $(PLATFORM)), )
-	WINDOWS := 1
+	WINDOWS := true
 	SYS_PYTHON_DIR := C:\\Python$(PYTHON_MAJOR)$(PYTHON_MINOR)
 	SYS_PYTHON := $(SYS_PYTHON_DIR)\\python.exe
-	SYS_VIRTUALENV := $(SYS_PYTHON_DIR)\\Scripts\\virtualenv.exe
 	# https://bugs.launchpad.net/virtualenv/+bug/449537
 	export TCL_LIBRARY=$(SYS_PYTHON_DIR)\\tcl\\tcl8.5
 else
 	ifneq ($(findstring darwin, $(PLATFORM)), )
-		MAC := 1
+		MAC := true
 	else
-		LINUX := 1
+		LINUX := true
 	endif
 	SYS_PYTHON := python$(PYTHON_MAJOR)
 	ifdef PYTHON_MINOR
 		SYS_PYTHON := $(SYS_PYTHON).$(PYTHON_MINOR)
 	endif
-	SYS_VIRTUALENV := virtualenv
 endif
 
-# virtualenv paths
+# Virtual environment paths
 ENV := env
 ifneq ($(findstring win32, $(PLATFORM)), )
 	BIN := $(ENV)/Scripts
+	ACTIVATE := $(BIN)/activate.bat
 	OPEN := cmd /c start
 else
 	BIN := $(ENV)/bin
+	ACTIVATE := . $(BIN)/activate
 	ifneq ($(findstring cygwin, $(PLATFORM)), )
 		OPEN := cygstart
 	else
@@ -50,235 +47,200 @@ else
 	endif
 endif
 
-# virtualenv executables
-PYTHON := $(BIN)/python
-PIP := $(BIN)/pip
-EASY_INSTALL := $(BIN)/easy_install
-RST2HTML := $(PYTHON) $(BIN)/rst2html.py
-PDOC := $(PYTHON) $(BIN)/pdoc
-PEP8 := $(BIN)/pep8
-PEP8RADIUS := $(BIN)/pep8radius
-PEP257 := $(BIN)/pep257
-PYLINT := $(BIN)/pylint
-PYREVERSE := $(BIN)/pyreverse
-NOSE := $(BIN)/nosetests
-PYTEST := $(BIN)/py.test
-COVERAGE := $(BIN)/coverage
-SNIFFER := $(BIN)/sniffer
+# Virtual environment executables
+ifndef TRAVIS
+	BIN_ := $(BIN)/
+endif
+PYTHON := $(BIN_)python
+PIP := $(BIN_)pip
+EASY_INSTALL := $(BIN_)easy_install
+RST2HTML := $(PYTHON) $(BIN_)rst2html.py
+PDOC := $(PYTHON) $(BIN_)pdoc
+MKDOCS := $(BIN_)mkdocs
+PEP8 := $(BIN_)pep8
+PEP8RADIUS := $(BIN_)pep8radius
+PEP257 := $(BIN_)pep257
+PYLINT := $(BIN_)pylint
+PYREVERSE := $(BIN_)pyreverse
+NOSE := $(BIN_)nosetests
+PYTEST := $(BIN_)py.test
+COVERAGE := $(BIN_)coverage
+COVERAGE_SPACE := $(BIN_)coverage.space
+SNIFFER := $(BIN_)sniffer
+HONCHO := PYTHONPATH=$(PWD) $(ACTIVATE) && $(BIN_)honcho
 
-# Flags for PHONY targets
-INSTALLED_FLAG := $(ENV)/.installed
-DEPENDS_CI_FLAG := $(ENV)/.depends-ci
-DEPENDS_DEV_FLAG := $(ENV)/.depends-dev
-DOCS_FLAG := $(ENV)/.docs
-ALL_FLAG := $(ENV)/.all
-
-# Main Targets #################################################################
+# MAIN TASKS ###################################################################
 
 .PHONY: all
-all: depends doc $(ALL_FLAG)
-$(ALL_FLAG): $(SOURCES)
-	$(MAKE) check
-	touch $(ALL_FLAG)  # flag to indicate all setup steps were successful
+all: doc
 
 .PHONY: ci
-ci: check test tests
+ci: check test ## Run all targets that determine CI status
 
 .PHONY: watch
-watch: depends-dev .clean-test
-	@ rm -rf $(FAILED_FLAG)
+watch: depends .clean-test ## Continuously run all CI targets when files chanage
 	$(SNIFFER)
 
-# Development Installation #####################################################
+.PHONY: gui
+gui: env
+	$(BIN)/$(PROJECT)
 
-.PHONY: env
-env: .virtualenv $(INSTALLED_FLAG)
-$(INSTALLED_FLAG): Makefile setup.py requirements.txt
-	VIRTUAL_ENV=$(ENV) $(PYTHON) setup.py develop
-	@ touch $(INSTALLED_FLAG)  # flag to indicate package is installed
+# SYSTEM DEPENDENCIES ##########################################################
 
-.PHONY: .virtualenv
-.virtualenv: $(PIP)
-$(PIP):
-	$(SYS_VIRTUALENV) --python $(SYS_PYTHON) $(ENV)
-	$(PIP) install --upgrade pip
+.PHONY: doctor
+doctor:  ## Confirm system dependencies are available
+	@ echo "Checking Python version:"
+	@ python --version | tee /dev/stderr | grep -q "3.5."
+
+# PROJECT DEPENDENCIES #########################################################
+
+DEPENDS := $(ENV)/.depends
+DEPENDS_CI := $(ENV)/.depends-ci
+DEPENDS_DEV := $(ENV)/.depends-dev
+
+env: $(PYTHON)
+
+$(PYTHON):
+	$(SYS_PYTHON) -m venv --clear $(ENV)
+	$(PYTHON) -m pip install --upgrade pip setuptools
 
 .PHONY: depends
-depends: depends-ci depends-dev
+depends: env $(DEPENDS) $(DEPENDS_CI) $(DEPENDS_DEV) ## Install all project dependnecies
 
-.PHONY: depends-ci
-depends-ci: env Makefile $(DEPENDS_CI_FLAG)
-$(DEPENDS_CI_FLAG): Makefile
-	$(PIP) install --upgrade pep8 pep257 pylint coverage nose nose-cov
-	@ touch $(DEPENDS_CI_FLAG)  # flag to indicate dependencies are installed
+$(DEPENDS): setup.py requirements.txt
+	$(PYTHON) setup.py develop
+	@ touch $@  # flag to indicate dependencies are installed
 
-.PHONY: depends-dev
-depends-dev: env Makefile $(DEPENDS_DEV_FLAG)
-$(DEPENDS_DEV_FLAG): Makefile
-	$(PIP) install --upgrade pip pep8radius pygments docutils pdoc wheel readme sniffer
+$(DEPENDS_CI): requirements/ci.txt
+	$(PIP) install -r $^
+	@ touch $@  # flag to indicate dependencies are installed
+
+$(DEPENDS_DEV): requirements/dev.txt
+	$(PIP) install pip -r $^
 ifdef WINDOWS
-	$(PIP) install --upgrade pywin32
+	@ echo "Manually install pywin32: https://sourceforge.net/projects/pywin32/files/pywin32"
 else ifdef MAC
 	$(PIP) install --upgrade pync MacFSEvents
 else ifdef LINUX
 	$(PIP) install --upgrade pyinotify
 endif
-	@ touch $(DEPENDS_DEV_FLAG)  # flag to indicate dependencies are installed
+	@ touch $@  # flag to indicate dependencies are installed
 
-# Documentation ################################################################
-
-.PHONY: doc
-doc: readme verify-readme apidocs uml
-
-.PHONY: readme
-readme: depends-dev README-github.html README-pypi.html
-README-github.html: README.md
-	pandoc -f markdown_github -t html -o README-github.html README.md
-README-pypi.html: README.rst
-	$(RST2HTML) README.rst README-pypi.html
-README.rst: README.md
-	pandoc -f markdown_github -t rst -o README.rst README.md
-
-.PHONY: verify-readme
-verify-readme: $(DOCS_FLAG)
-$(DOCS_FLAG): README.rst
-	$(PYTHON) setup.py check --restructuredtext --strict --metadata
-	@ touch $(DOCS_FLAG)  # flag to indicate README has been checked
-
-.PHONY: apidocs
-apidocs: depends-dev apidocs/$(PACKAGE)/index.html
-apidocs/$(PACKAGE)/index.html: $(SOURCES)
-	$(PDOC) --html --overwrite $(PACKAGE) --html-dir apidocs
-
-.PHONY: uml
-uml: depends-dev docs/*.png
-docs/*.png: $(SOURCES)
-	$(PYREVERSE) $(PACKAGE) -p $(PACKAGE) -a 1 -f ALL -o png --ignore test
-	- mv -f classes_$(PACKAGE).png docs/classes.png
-	- mv -f packages_$(PACKAGE).png docs/packages.png
-
-.PHONY: read
-read: doc
-	$(OPEN) apidocs/$(PACKAGE)/index.html
-	$(OPEN) README-pypi.html
-	$(OPEN) README-github.html
-
-# Static Analysis ##############################################################
+# CHECKS #######################################################################
 
 .PHONY: check
-check: pep8 pep257 pylint
+check: pep8 pep257 pylint ## Run all static analysis targets
 
 .PHONY: pep8
-pep8: depends-ci
-	$(PEP8) $(PACKAGE) tests --config=.pep8rc
+pep8: depends ## Check for convention issues
+	$(PEP8) $(DIRECTORIES) --config=.pep8rc
 
 .PHONY: pep257
-pep257: depends-ci
-# D10*: docstring missing (checked by PyLint)
-# D202: No blank lines allowed *after* function docstring (personal preference)
-# D203: 1 blank line required before class (deprecated warning)
-	$(PEP257) $(PACKAGE) tests --add-ignore=D102,D105,D202,D203
+pep257: depends ## Check for docstring issues
+	$(PEP257) $(DIRECTORIES)
 
 .PHONY: pylint
-pylint: depends-ci
-# These warnings shouldn't fail builds, but warn in editors:
-# C0111: Line too long
-# R0913: Too many arguments
-# R0914: Too many local variables
-	$(PYLINT) $(PACKAGE) tests --rcfile=.pylintrc --disable=C0111,R0913,R0914
+pylint: depends ## Check for code issues
+	$(PYLINT) $(DIRECTORIES) --rcfile=.pylintrc
 
 .PHONY: fix
-fix: depends-dev
+fix: depends
 	$(PEP8RADIUS) --docformatter --in-place
 
-# Testing ######################################################################
+# TESTS ########################################################################
 
 RANDOM_SEED ?= $(shell date +%s)
 
-NOSE_OPTS := --with-doctest --with-cov --cov=$(PACKAGE) --cov-report=html
+NOSE_OPTS := --with-doctest --with-cov --cov=$(PACKAGE) --cov-report=html --cov-report=term-missing
+
+.PHONY: test
+test: test-all
 
 .PHONY: test-unit
-test-unit: test
-.PHONY: test
-test: depends-ci .clean-test
+test-unit: depends .clean-test ## Run the unit tests
 	$(NOSE) $(PACKAGE) $(NOSE_OPTS)
 ifndef TRAVIS
-	$(COVERAGE) report --show-missing --fail-under=$(UNIT_TEST_COVERAGE)
+ifndef APPVEYOR
+	$(COVERAGE_SPACE) $(REPOSITORY) unit
+endif
 endif
 
 .PHONY: test-int
-test-int: depends-ci .clean-test
-	TEST_INTEGRATION=1 $(NOSE) tests $(NOSE_OPTS)
+test-int: depends .clean-test ## Run the integration tests
+	$(NOSE) tests $(NOSE_OPTS)
 ifndef TRAVIS
-	$(COVERAGE) report --show-missing --fail-under=$(INTEGRATION_TEST_COVERAGE)
+ifndef APPVEYOR
+	$(COVERAGE_SPACE) $(REPOSITORY) integration
+endif
 endif
 
 .PHONY: test-all
-test-all: tests
-.PHONY: test-all
-tests: depends-ci .clean-test
-	TEST_INTEGRATION=1 $(NOSE) $(PACKAGE) tests $(NOSE_OPTS) -xv
+test-all: depends .clean-test ## Run all the tests
+	$(NOSE) $(DIRECTORIES) $(NOSE_OPTS)
 ifndef TRAVIS
-	$(COVERAGE) report --show-missing --fail-under=$(COMBINED_TEST_COVERAGE)
+ifndef APPVEYOR
+	$(COVERAGE_SPACE) $(REPOSITORY) overall
+endif
 endif
 
 .PHONY: read-coverage
 read-coverage:
 	$(OPEN) htmlcov/index.html
 
-# Cleanup ######################################################################
+# DOCUMENTATION ################################################################
 
-.PHONY: clean
-clean: .clean-dist .clean-test .clean-doc .clean-build
-	rm -rf $(ALL_FLAG)
+PDOC_INDEX := docs/apidocs/$(PACKAGE)/index.html
+MKDOCS_INDEX := site/index.html
 
-.PHONY: clean-all
-clean-all: clean .clean-env .clean-workspace
+.PHONY: doc
+doc: uml pdoc mkdocs ## Run all documentation targets
 
-.PHONY: .clean-build
-.clean-build:
-	find $(PACKAGE) -name '*.pyc' -delete
-	find $(PACKAGE) -name '__pycache__' -delete
-	rm -rf $(INSTALLED_FLAG)
+.PHONY: uml
+uml: depends docs/*.png ## Generate UML diagrams for classes and packages
+docs/*.png: $(FILES)
+	$(PYREVERSE) $(PACKAGE) -p $(PACKAGE) -a 1 -f ALL -o png --ignore tests
+	- mv -f classes_$(PACKAGE).png docs/classes.png
+	- mv -f packages_$(PACKAGE).png docs/packages.png
 
-.PHONY: .clean-doc
-.clean-doc:
-	rm -rf README.rst apidocs *.html docs/*.png
+.PHONY: pdoc
+pdoc: depends $(PDOC_INDEX)  ## Generate API documentaiton with pdoc
+$(PDOC_INDEX): $(FILES)
+	$(PDOC) --html --overwrite $(PACKAGE) --html-dir docs/apidocs
+	@ touch $@
 
-.PHONY: .clean-test
-.clean-test:
-	rm -rf .pytest .coverage htmlcov
+.PHONY: mkdocs
+mkdocs: depends $(MKDOCS_INDEX) ## Build the documentation site with mkdocs
+$(MKDOCS_INDEX): mkdocs.yml docs/*.md
+	ln -sf `realpath README.md --relative-to=docs` docs/index.md
+	ln -sf `realpath CHANGELOG.md --relative-to=docs/about` docs/about/changelog.md
+	ln -sf `realpath CONTRIBUTING.md --relative-to=docs/about` docs/about/contributing.md
+	ln -sf `realpath LICENSE.md --relative-to=docs/about` docs/about/license.md
+	$(MKDOCS) build --clean --strict
 
-.PHONY: .clean-dist
-.clean-dist:
-	rm -rf dist build
+.PHONY: mkdocs-live
+mkdocs-live: mkdocs ## Launch and continuously rebuild the mkdocs site
+	eval "sleep 3; open http://127.0.0.1:8000" &
+	$(MKDOCS) serve
 
-.PHONY: .clean-env
-.clean-env: clean
-	rm -rf $(ENV)
-
-.PHONY: .clean-workspace
-.clean-workspace:
-	rm -rf *.sublime-workspace
-
-# Release ######################################################################
+# RELEASE ######################################################################
 
 .PHONY: register-test
-register-test: doc
+register-test: README.rst CHANGELOG.rst ## Register the project on the test PyPI
 	$(PYTHON) setup.py register --strict --repository https://testpypi.python.org/pypi
 
+.PHONY: register
+register: README.rst CHANGELOG.rst ## Register the project on PyPI
+	$(PYTHON) setup.py register --strict
+
 .PHONY: upload-test
-upload-test: register-test
+upload-test: register-test ## Upload the current version to the test PyPI
 	$(PYTHON) setup.py sdist upload --repository https://testpypi.python.org/pypi
 	$(PYTHON) setup.py bdist_wheel upload --repository https://testpypi.python.org/pypi
 	$(OPEN) https://testpypi.python.org/pypi/$(PROJECT)
 
-.PHONY: register
-register: doc
-	$(PYTHON) setup.py register --strict
-
 .PHONY: upload
-upload: .git-no-changes register
+upload: .git-no-changes register ## Upload the current version to PyPI
+	$(PYTHON) setup.py check --restructuredtext --strict --metadata
 	$(PYTHON) setup.py sdist upload
 	$(PYTHON) setup.py bdist_wheel upload
 	$(OPEN) https://pypi.python.org/pypi/$(PROJECT)
@@ -294,22 +256,47 @@ upload: .git-no-changes register
 		exit -1;                                  \
 	fi;
 
-# System Installation ##########################################################
+%.rst: %.md
+	pandoc -f markdown_github -t rst -o $@ $<
 
-.PHONY: develop
-develop:
-	$(SYS_PYTHON) setup.py develop
+# CLEANUP ######################################################################
 
-.PHONY: install
-install:
-	$(SYS_PYTHON) setup.py install
+.PHONY: clean
+clean: .clean-dist .clean-test .clean-doc .clean-build
 
-.PHONY: download
-download:
-	pip install $(PROJECT)
+.PHONY: clean-all
+clean-all: clean .clean-env .clean-workspace
 
-# Execution ##################################################################
+.PHONY: .clean-build
+.clean-build:
+	find $(DIRECTORIES) -name '*.pyc' -delete
+	find $(DIRECTORIES) -name '__pycache__' -delete
+	rm -rf *.egg-info
 
-.PHONY: gui
-gui: env
-	$(BIN)/$(PROJECT)
+.PHONY: .clean-doc
+.clean-doc:
+	rm -rf README.rst docs/apidocs *.html docs/*.png site
+
+.PHONY: .clean-test
+.clean-test:
+	rm -rf .cache .pytest .coverage htmlcov
+
+.PHONY: .clean-dist
+.clean-dist:
+	rm -rf dist build
+
+.PHONY: .clean-env
+.clean-env: clean
+	rm -rf $(ENV)
+
+.PHONY: .clean-workspace
+.clean-workspace:
+	rm -rf *.sublime-workspace
+
+# HELP #########################################################################
+
+.PHONY: help
+help: all
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+.DEFAULT_GOAL := help

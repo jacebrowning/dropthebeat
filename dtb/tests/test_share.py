@@ -11,7 +11,7 @@ import shutil
 
 from dtb import share
 
-from dtb.test import FILES
+from dtb.tests import FILES
 
 
 class TestFunctions(unittest.TestCase):  # pylint: disable=R0904

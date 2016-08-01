@@ -11,8 +11,8 @@ import shutil
 
 from dtb.song import Song
 
-from dtb.test import EMPTY
-from dtb.test import FAKESONG, FAKELINK, FAKEFILE, BADFAKEFILE, BROKENLINK
+from dtb.tests import EMPTY
+from dtb.tests import FAKESONG, FAKELINK, FAKEFILE, BADFAKEFILE, BROKENLINK
 
 
 class TestSong(unittest.TestCase):  # pylint: disable=R0904

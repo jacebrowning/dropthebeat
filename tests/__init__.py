@@ -1,1 +1,1 @@
-"""Integration tests for the package."""
+"""Integration tests for the `dtb` package."""

@@ -11,7 +11,7 @@ import shutil
 
 from dtb.user import User, get_current
 
-from dtb.test import FILES
+from dtb.tests import FILES
 
 FAKESONG = os.path.join(FILES, 'FakeSong.mp3')
 FAKELINK = os.path.join(FILES, 'abc123.yml')

@@ -1,12 +1,18 @@
 [MESSAGES CONTROL]
 
-disable=locally-disabled,fixme,too-few-public-methods,too-many-public-methods,invalid-name,global-statement,too-many-ancestors,logging-format-interpolation,duplicate-code
+disable=locally-disabled,fixme,too-few-public-methods,too-many-public-methods,invalid-name,global-statement,too-many-ancestors,missing-docstring,logging-format-interpolation
 
 [FORMAT]
 
 max-line-length=80
 
 ignore-long-lines=^.*((https?:)|(pragma:)|(TODO:)).*$
+
+[SIMILARITIES]
+
+min-similarity-lines=8
+
+ignore-imports=yes
 
 [REPORTS]
 
