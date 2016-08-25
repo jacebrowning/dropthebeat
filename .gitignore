@@ -41,6 +41,7 @@ Icon*
 # Build and release directories
 /build
 /dist
+/*.spec
 
 # Sublime Text
 *.sublime-workspace
