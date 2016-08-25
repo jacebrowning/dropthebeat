@@ -243,7 +243,12 @@ class Application(ttk.Frame):  # pylint: disable=too-many-instance-attributes
     @staticmethod
     def show_error_from_exception(exception, title="Error"):
         """Convert an exception to an error dialog."""
-        message = str(exception).capitalize().replace(": ", ":\n\n")
+        message = str(exception)
+        message = message[0].upper() + message[1:]
+        if ": " in message:
+            message.replace(": ", ":\n\n")
+        else:
+            message += "."
         messagebox.showerror(title, message)
 
 
@@ -304,27 +309,29 @@ def run(args):
         logging.error("tkinter is not available")
         return False
 
-    else:
+    root = tk.Tk()
+    root.title("{} (v{})".format(GUI, __version__))
+    root.minsize(500, 500)
 
-        root = tk.Tk()
-        root.title("{} (v{})".format(GUI, __version__))
-        root.minsize(500, 500)
+    # Map the Mac 'command' key to 'control'
+    if sys.platform == 'darwin':
+        root.bind_class('Listbox', '<Command-Button-1>',
+                        root.bind_class('Listbox', '<Control-Button-1>'))
 
-        # Map the Mac 'command' key to 'control'
-        if sys.platform == 'darwin':
-            root.bind_class('Listbox', '<Command-Button-1>',
-                            root.bind_class('Listbox', '<Control-Button-1>'))
+    # Temporarily hide the window for other dialogs
+    root.withdraw()
 
-        # Temporarily hide the window for other dialogs
-        root.withdraw()
-
-        # Start the application
+    # Start the application
+    try:
         app = Application(master=root, home=args.home,
                           root=args.root, name=args.test)
         if _LAUNCH:
             app.mainloop()
+    except Exception as e:  # pylint: disable=broad-except
+        Application.show_error_from_exception(e)
+        return False
 
-        return True
+    return True
 
 
 if __name__ == '__main__':  # pragma: no cover (manual test)
