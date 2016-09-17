@@ -6,8 +6,6 @@ import unittest
 from unittest.mock import patch, Mock
 
 import os
-import sys
-import imp
 import logging
 
 from dtb import gui
@@ -31,17 +29,6 @@ class TestGUI(unittest.TestCase):  # pylint: disable=R0904
     def test_exit(self):
         """Verify the GUI can exit on error."""
         self.assertRaises(SystemExit, gui.main, [])
-
-
-class TestImport(unittest.TestCase):  # pylint: disable=R0904
-    """Unit tests for importing the GUI module."""
-
-    def test_import(self):
-        """Verify tkinter import errors are handled."""
-        sys.modules['tkinter'] = Mock(side_effect=ImportError)
-        imp.reload(gui)
-        self.assertFalse(gui.run(Mock()))
-        self.assertIsInstance(gui.tk, Mock)
 
 
 @patch('dtb.gui.run', Mock(return_value=True))  # pylint: disable=R0904

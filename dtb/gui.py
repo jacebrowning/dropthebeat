@@ -2,35 +2,28 @@
 
 """Graphical interface for DropTheBeat."""
 
-import sys
-from unittest.mock import Mock
-try:
-    import tkinter as tk
-    from tkinter import ttk
-    from tkinter import messagebox, simpledialog, filedialog
-except ImportError as err:
-    sys.stderr.write("WARNING: {}\n".format(err))
-    tk = Mock()
-    ttk = Mock()
-
 import os
+import sys
 import argparse
+from tkinter import *  # pylint: disable=wildcard-import,unused-wildcard-import
+from tkinter import messagebox, simpledialog, filedialog
+from tkinter.ttk import *  # pylint: disable=wildcard-import,unused-wildcard-import
 from itertools import chain
 import logging
 
-from dtb import GUI, __version__
-from dtb import share, user
-from dtb.common import SHARED, WarningFormatter
-from dtb import settings
+from . import GUI, __version__
+from . import share, user
+from . import settings
+from .common import SHARED, WarningFormatter
 
 _LAUNCH = True
 
 
-class Application(ttk.Frame):  # pylint: disable=too-many-instance-attributes
+class Application(Frame):  # pylint: disable=too-many-instance-attributes
     """Tkinter application for DropTheBeat."""
 
     def __init__(self, master=None, root=None, home=None, name=None):
-        ttk.Frame.__init__(self, master)
+        Frame.__init__(self, master)
 
         # Load the root sharing directory
         self.root = root or share.find(home)
@@ -64,8 +57,8 @@ class Application(ttk.Frame):  # pylint: disable=too-many-instance-attributes
                     break
 
         # Create variables
-        self.path_root = tk.StringVar(value=self.root)
-        self.path_downloads = tk.StringVar(value=self.user.path_downloads)
+        self.path_root = StringVar(value=self.root)
+        self.path_downloads = StringVar(value=self.user.path_downloads)
         self.outgoing = []
         self.incoming = []
 
@@ -73,7 +66,7 @@ class Application(ttk.Frame):  # pylint: disable=too-many-instance-attributes
         self.listbox_outgoing = None
         self.listbox_incoming = None
         frame = self.init(master)
-        frame.pack(fill=tk.BOTH, expand=1)
+        frame.pack(fill=BOTH, expand=1)
 
         # Show the GUI
         master.deiconify()
@@ -89,11 +82,11 @@ class Application(ttk.Frame):  # pylint: disable=too-many-instance-attributes
         # Shared keyword arguments
         kw_f = {'padding': 5}  # constructor arguments for frames
         kw_gp = {'padx': 5, 'pady': 5}  # grid arguments for padded widgets
-        kw_gs = {'sticky': tk.NSEW}  # grid arguments for sticky widgets
+        kw_gs = {'sticky': NSEW}  # grid arguments for sticky widgets
         kw_gsp = dict(chain(kw_gs.items(), kw_gp.items()))  # grid arguments for sticky padded widgets
 
         # Configure grid
-        frame = ttk.Frame(root, **kw_f)
+        frame = Frame(root, **kw_f)
         frame.rowconfigure(0, weight=0)
         frame.rowconfigure(2, weight=1)
         frame.rowconfigure(4, weight=1)
@@ -102,7 +95,7 @@ class Application(ttk.Frame):  # pylint: disable=too-many-instance-attributes
         # Create widgets
         def frame_settings(master):
             """Frame for the settings."""
-            frame = ttk.Frame(master, **kw_f)
+            frame = Frame(master, **kw_f)
 
             # Configure grid
             frame.rowconfigure(0, weight=1)
@@ -112,17 +105,17 @@ class Application(ttk.Frame):  # pylint: disable=too-many-instance-attributes
             frame.columnconfigure(2, weight=0)
 
             # Place widgets
-            ttk.Label(frame, text="Shared:").grid(row=0, column=0, sticky=tk.W, **kw_gp)
-            ttk.Entry(frame, state='readonly', textvariable=self.path_root).grid(row=0, column=1, columnspan=2, **kw_gsp)
-            ttk.Label(frame, text="Downloads:").grid(row=1, column=0, sticky=tk.W, **kw_gp)
-            ttk.Entry(frame, state='readonly', textvariable=self.path_downloads).grid(row=1, column=1, **kw_gsp)
-            ttk.Button(frame, text="...", width=0, command=self.browse_downloads).grid(row=1, column=2, ipadx=5, **kw_gp)
+            Label(frame, text="Shared:").grid(row=0, column=0, sticky=W, **kw_gp)
+            Entry(frame, state='readonly', textvariable=self.path_root).grid(row=0, column=1, columnspan=2, **kw_gsp)
+            Label(frame, text="Downloads:").grid(row=1, column=0, sticky=W, **kw_gp)
+            Entry(frame, state='readonly', textvariable=self.path_downloads).grid(row=1, column=1, **kw_gsp)
+            Button(frame, text="...", width=0, command=self.browse_downloads).grid(row=1, column=2, ipadx=5, **kw_gp)
 
             return frame
 
         def frame_incoming(master):
             """Frame for incoming songs."""
-            frame = ttk.Frame(master, **kw_f)
+            frame = Frame(master, **kw_f)
 
             # Configure grid
             frame.rowconfigure(0, weight=1)
@@ -132,19 +125,19 @@ class Application(ttk.Frame):  # pylint: disable=too-many-instance-attributes
             frame.columnconfigure(2, weight=1)
 
             # Place widgets
-            self.listbox_incoming = tk.Listbox(frame, selectmode=tk.EXTENDED if mac else tk.MULTIPLE)
+            self.listbox_incoming = Listbox(frame, selectmode=EXTENDED if mac else MULTIPLE)
             self.listbox_incoming.grid(row=0, column=0, columnspan=3, **kw_gsp)
-            scroll_incoming = ttk.Scrollbar(frame, orient=tk.VERTICAL, command=self.listbox_incoming.yview)
+            scroll_incoming = Scrollbar(frame, orient=VERTICAL, command=self.listbox_incoming.yview)
             self.listbox_incoming.configure(yscrollcommand=scroll_incoming.set)
-            scroll_incoming.grid(row=0, column=2, sticky=(tk.N, tk.E, tk.S))
-            ttk.Button(frame, text="\u21BB", width=0, command=self.update).grid(row=1, column=0, sticky=tk.SW, ipadx=5, **kw_gp)
-            ttk.Button(frame, text="Ignore Selected", command=self.do_ignore).grid(row=1, column=1, sticky=tk.SW, ipadx=5, **kw_gp)
-            ttk.Button(frame, text="Download Selected", command=self.do_download).grid(row=1, column=2, sticky=tk.SE, ipadx=5, **kw_gp)
+            scroll_incoming.grid(row=0, column=2, sticky=(N, E, S))
+            Button(frame, text="\u21BB", width=0, command=self.update).grid(row=1, column=0, sticky=SW, ipadx=5, **kw_gp)
+            Button(frame, text="Ignore Selected", command=self.do_ignore).grid(row=1, column=1, sticky=SW, ipadx=5, **kw_gp)
+            Button(frame, text="Download Selected", command=self.do_download).grid(row=1, column=2, sticky=SE, ipadx=5, **kw_gp)
             return frame
 
         def frame_outgoing(master):
             """Frame for outgoing songs."""
-            frame = ttk.Frame(master, **kw_f)
+            frame = Frame(master, **kw_f)
 
             # Configure grid
             frame.rowconfigure(0, weight=1)
@@ -154,20 +147,20 @@ class Application(ttk.Frame):  # pylint: disable=too-many-instance-attributes
             frame.columnconfigure(2, weight=1)
 
             # Place widgets
-            self.listbox_outgoing = tk.Listbox(frame, selectmode=tk.EXTENDED if mac else tk.MULTIPLE)
+            self.listbox_outgoing = Listbox(frame, selectmode=EXTENDED if mac else MULTIPLE)
             self.listbox_outgoing.grid(row=0, column=0, columnspan=3, **kw_gsp)
-            scroll_outgoing = ttk.Scrollbar(frame, orient=tk.VERTICAL, command=self.listbox_outgoing.yview)
+            scroll_outgoing = Scrollbar(frame, orient=VERTICAL, command=self.listbox_outgoing.yview)
             self.listbox_outgoing.configure(yscrollcommand=scroll_outgoing.set)
-            scroll_outgoing.grid(row=0, column=2, sticky=(tk.N, tk.E, tk.S))
-            ttk.Button(frame, text="\u21BB", width=0, command=self.update).grid(row=1, column=0, sticky=tk.SW, ipadx=5, **kw_gp)
-            ttk.Button(frame, text="Remove Selected", command=self.do_remove).grid(row=1, column=1, sticky=tk.SW, ipadx=5, **kw_gp)
-            ttk.Button(frame, text="Share Songs...", command=self.do_share).grid(row=1, column=2, sticky=tk.SE, ipadx=5, **kw_gp)
+            scroll_outgoing.grid(row=0, column=2, sticky=(N, E, S))
+            Button(frame, text="\u21BB", width=0, command=self.update).grid(row=1, column=0, sticky=SW, ipadx=5, **kw_gp)
+            Button(frame, text="Remove Selected", command=self.do_remove).grid(row=1, column=1, sticky=SW, ipadx=5, **kw_gp)
+            Button(frame, text="Share Songs...", command=self.do_share).grid(row=1, column=2, sticky=SE, ipadx=5, **kw_gp)
 
             return frame
 
         def separator(master):
             """Widget to separate frames."""
-            return ttk.Separator(master)
+            return Separator(master)
 
         # Place widgets
         frame_settings(frame).grid(row=0, **kw_gs)
@@ -196,7 +189,7 @@ class Application(ttk.Frame):  # pylint: disable=too-many-instance-attributes
         """Share songs."""
         paths = filedialog.askopenfilenames()
         if isinstance(paths, str):  # http://bugs.python.org/issue5712
-            paths = self.master.tk.splitlist(paths)
+            paths = self.master.splitlist(paths)
         logging.debug("paths: {}".format(paths))
         for path in paths:
             self.user.recommend(path)
@@ -229,16 +222,16 @@ class Application(ttk.Frame):  # pylint: disable=too-many-instance-attributes
         # Update outgoing songs list
         logging.info("updating outgoing songs...")
         self.outgoing = list(self.user.outgoing)
-        self.listbox_outgoing.delete(0, tk.END)
+        self.listbox_outgoing.delete(0, END)
         for song in self.outgoing:
-            self.listbox_outgoing.insert(tk.END, song.out_string)
+            self.listbox_outgoing.insert(END, song.out_string)
         # Update incoming songs list
 
         logging.info("updating incoming songs...")
         self.incoming = list(self.user.incoming)
-        self.listbox_incoming.delete(0, tk.END)
+        self.listbox_incoming.delete(0, END)
         for song in self.incoming:
-            self.listbox_incoming.insert(tk.END, song.in_string)
+            self.listbox_incoming.insert(END, song.in_string)
 
     @staticmethod
     def show_error_from_exception(exception, title="Error"):
@@ -304,12 +297,7 @@ def _configure_logging(verbosity=0):
 def run(args):
     """Start the GUI."""
 
-    # Exit if tkinter is not available
-    if isinstance(tk, Mock) or isinstance(ttk, Mock):
-        logging.error("tkinter is not available")
-        return False
-
-    root = tk.Tk()
+    root = Tk()
     root.title("{} (v{})".format(GUI, __version__))
     root.minsize(500, 500)
 
