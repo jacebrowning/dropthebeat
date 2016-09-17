@@ -1,37 +1,34 @@
-sudo: false
-
 language: python
 python:
-- 3.3
-- 3.4
-- 3.5
+  - 3.3
+  - 3.4
+  - 3.5
 
 cache:
   pip: true
   directories:
-  - env
+    - env
 
 env:
   global:
-  - RANDOM_SEED=12345
+    - RANDOM_SEED=0
 
 install:
-- pip install coveralls scrutinizer-ocular
+  - make install
 
 before_script:
-- make env
-- make depends
-- "export DISPLAY=:99.0"
-- "sh -e /etc/init.d/xvfb start"
-- sleep 3 # give xvfb some time to start
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
 
 script:
-- make check
-- make test
+  - make check
+  - make test
 
 after_success:
-- coveralls
-- ocular
+  - pip install coveralls scrutinizer-ocular
+  - coveralls
+  - ocular
 
 notifications:
   email:

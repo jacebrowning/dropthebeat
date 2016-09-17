@@ -2,21 +2,48 @@
 
 """Setup script for DropTheBeat."""
 
+import os
+import sys
+
 import setuptools
 
-from dtb import __project__, __version__, CLI, GUI
 
-try:
-    README = open("README.rst").read()
-    CHANGELOG = open("CHANGELOG.rst").read()
-except IOError:
-    LONG_DESCRIPTION = "<placeholder>"
-else:
-    LONG_DESCRIPTION = README + '\n' + CHANGELOG
+PACKAGE_NAME = 'dtb'
+MINIMUM_PYTHON_VERSION = 3, 3
 
+
+def check_python_version():
+    """Exit when the Python version is too low."""
+    if sys.version_info < MINIMUM_PYTHON_VERSION:
+        sys.exit("Python {}.{}+ is required.".format(*MINIMUM_PYTHON_VERSION))
+
+
+def read_package_variable(key):
+    """Read the value of a variable from the package without importing."""
+    module_path = os.path.join(PACKAGE_NAME, '__init__.py')
+    with open(module_path) as module:
+        for line in module:
+            parts = line.strip().split(' ')
+            if parts and parts[0] == key:
+                return parts[-1].strip("'")
+    assert 0, "'{0}' not found in '{1}'".format(key, module_path)
+
+
+def read_descriptions():
+    """Build a description for the project from documentation files."""
+    try:
+        readme = open("README.rst").read()
+        changelog = open("CHANGELOG.rst").read()
+    except IOError:
+        return "<placeholder>"
+    else:
+        return readme + '\n' + changelog
+
+
+check_python_version()
 setuptools.setup(
-    name=__project__,
-    version=__version__,
+    name=read_package_variable('__project__'),
+    version=read_package_variable('__version__'),
 
     description="Music sharing using Dropbox.",
     url='https://github.com/jacebrowning/dropthebeat',
@@ -25,10 +52,10 @@ setuptools.setup(
 
     packages=setuptools.find_packages(),
 
-    entry_points={'console_scripts': [CLI + ' = dtb.cli:main',
-                                      GUI + ' = dtb.gui:main']},
+    entry_points={'console_scripts': ['dtb = dtb.cli:main',
+                                      'DropTheBeat = dtb.gui:main']},
 
-    long_description=LONG_DESCRIPTION,
+    long_description=read_descriptions(),
     license='MIT',
     classifiers=[
         'Development Status :: 5 - Production/Stable',

@@ -22,13 +22,13 @@ Recommend songs to your friends and download their shared files to your computer
 
 Install DropTheBeat with pip:
 
-```
+```sh
 $ pip install DropTheBeat
 ```
 
 or directly from the source code:
 
-```
+```sh
 $ git clone https://github.com/jacebrowning/dropthebeat.git
 $ cd dropthebeat
 $ python setup.py install
@@ -45,7 +45,7 @@ $ python setup.py install
 
 Start the application:
 
-```
+```sh
 $ DropTheBeat
 ```
 
@@ -53,33 +53,33 @@ $ DropTheBeat
 
 Create your user folder:
 
-```
+```sh
 $ dtb --new <"First Last">
 ```
 
 Recommend a song to friends:
 
-```
+```sh
 $ dtb --share <path/to/a/song>
 $ dtb --share <path/to/a/song> --users "John Doe" "Jane Doe"
 ```
 
 Display recommended songs:
 
-```
+```sh
 $ dtb --incoming
 $ dtb --outoing
 ```
 
 Download recommended songs:
 
-```
+```sh
 $ dtb
 $ dtb --daemon
 ```
 
 Launch the GUI:
 
-```
+```sh
 $ dtb --gui
 ```
